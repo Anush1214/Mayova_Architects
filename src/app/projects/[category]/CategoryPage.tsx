@@ -111,7 +111,7 @@ export default function CategoryPage({ category }: { category: string }) {
                       } flex flex-col justify-center`}
                     >
                       <p className="font-sans text-[9px] tracking-ultra-wide uppercase text-warm-gold mb-4">
-                        {project.category} &mdash; {project.year}
+                        {categoryTitle} &mdash; {project.year}
                       </p>
                       <h3 className="font-serif text-3xl text-charcoal mb-3 leading-tight">
                         {project.title}
