@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, Suspense } from 'react';
+import { useRef, useState, useEffect, Suspense, useMemo } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
@@ -66,7 +66,7 @@ function CameraRig({ target }: { target: React.RefObject<{ x: number; y: number;
 function AnimatedLetter({ letter, proxy, font }: { letter: string; proxy: LetterProxy; font: Font }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.MeshStandardMaterial>(null);
-  const geometry = React.useMemo(() => new TextGeometry(letter, {
+  const geometry = useMemo(() => new TextGeometry(letter, {
     font,
     size: 1.4,
     depth: 0.35,
@@ -237,7 +237,7 @@ export default function HeroScene({ onReady }: HeroSceneProps) {
   const [isClient, setIsClient] = useState(false);
   const assemblyDone = useRef(false);
 
-  const proxies = React.useMemo(() => 
+  const proxies = useMemo(() => 
     LETTERS.map((_, i) => ({
       x: SCATTERED_INITIAL[i].x,
       y: SCATTERED_INITIAL[i].y,
