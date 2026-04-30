@@ -77,7 +77,10 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
   const servicesRef = useRef<HTMLDivElement>(null);
   const assemblyDone = useRef(false);
   const onReadyRef = useRef(onReady);
-  onReadyRef.current = onReady;
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);

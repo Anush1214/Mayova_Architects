@@ -66,21 +66,17 @@ function CameraRig({ target }: { target: React.RefObject<{ x: number; y: number;
 function AnimatedLetter({ letter, proxy, font }: { letter: string; proxy: LetterProxy; font: Font }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.MeshStandardMaterial>(null);
-  const geoRef = useRef<TextGeometry | null>(null);
-
-  if (!geoRef.current) {
-    geoRef.current = new TextGeometry(letter, {
-      font,
-      size: 1.4,
-      depth: 0.35,
-      curveSegments: 12,
-      bevelEnabled: true,
-      bevelThickness: 0.025,
-      bevelSize: 0.015,
-      bevelOffset: 0,
-      bevelSegments: 5,
-    });
-  }
+  const geometry = React.useMemo(() => new TextGeometry(letter, {
+    font,
+    size: 1.4,
+    depth: 0.35,
+    curveSegments: 12,
+    bevelEnabled: true,
+    bevelThickness: 0.025,
+    bevelSize: 0.015,
+    bevelOffset: 0,
+    bevelSegments: 5,
+  }), [letter, font]);
 
   useFrame(() => {
     if (!meshRef.current) return;
@@ -90,7 +86,7 @@ function AnimatedLetter({ letter, proxy, font }: { letter: string; proxy: Letter
   });
 
   return (
-    <mesh ref={meshRef} geometry={geoRef.current!} castShadow>
+    <mesh ref={meshRef} geometry={geometry} castShadow>
       <meshStandardMaterial
         ref={matRef}
         color="#D5C8BB"
@@ -107,18 +103,20 @@ function AnimatedLetter({ letter, proxy, font }: { letter: string; proxy: Letter
 // ===== Letters + Animation Controller =====
 function LettersWithAnimation({
   proxies,
-  cameraTarget,
+  cameraTargetRef,
   onAssemblyComplete,
 }: {
   proxies: LetterProxy[];
-  cameraTarget: React.RefObject<{ x: number; y: number; z: number }>;
+  cameraTargetRef: React.RefObject<{ x: number; y: number; z: number }>;
   onAssemblyComplete: () => void;
 }) {
   const font = useLoader(FontLoader, '/fonts/optimer_regular.typeface.json');
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   // Store callback in ref to avoid re-triggering the effect
   const onCompleteRef = useRef(onAssemblyComplete);
-  onCompleteRef.current = onAssemblyComplete;
+  useEffect(() => {
+    onCompleteRef.current = onAssemblyComplete;
+  }, [onAssemblyComplete]);
   const hasRun = useRef(false);
 
   // Start animation exactly once when this component mounts (font is loaded)
@@ -136,7 +134,11 @@ function LettersWithAnimation({
       proxies[i].rotZ = SCATTERED_INITIAL[i].rotZ;
       proxies[i].opacity = 1;
     });
-    cameraTarget.current = { x: 0, y: 0.5, z: 10.5 };
+    if (cameraTargetRef.current) {
+      cameraTargetRef.current.x = 0;
+      cameraTargetRef.current.y = 0.5;
+      cameraTargetRef.current.z = 10.5;
+    }
 
     // Create the assembly timeline
     const tl = gsap.timeline({
@@ -162,7 +164,7 @@ function LettersWithAnimation({
     });
 
     // Camera push-in
-    tl.to(cameraTarget.current, {
+    tl.to(cameraTargetRef.current, {
       x: 0, y: 0, z: 9,
       duration: 3.5,
       ease: 'power2.inOut',
@@ -194,16 +196,16 @@ function LettersWithAnimation({
 // ===== Main Scene =====
 function Scene({
   proxies,
-  cameraTarget,
+  cameraTargetRef,
   onAssemblyComplete,
 }: {
   proxies: LetterProxy[];
-  cameraTarget: React.RefObject<{ x: number; y: number; z: number }>;
+  cameraTargetRef: React.RefObject<{ x: number; y: number; z: number }>;
   onAssemblyComplete: () => void;
 }) {
   return (
     <>
-      <CameraRig target={cameraTarget} />
+      <CameraRig target={cameraTargetRef} />
       <ambientLight intensity={0.35} color="#FFF8F0" />
       <directionalLight position={[8, 12, 6]} intensity={1.0} color="#FFF5E6" castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
       <directionalLight position={[-5, 8, -4]} intensity={0.25} color="#E8DDD3" />
@@ -213,7 +215,7 @@ function Scene({
       <Suspense fallback={null}>
         <LettersWithAnimation
           proxies={proxies}
-          cameraTarget={cameraTarget}
+          cameraTargetRef={cameraTargetRef}
           onAssemblyComplete={onAssemblyComplete}
         />
       </Suspense>
@@ -235,7 +237,7 @@ export default function HeroScene({ onReady }: HeroSceneProps) {
   const [isClient, setIsClient] = useState(false);
   const assemblyDone = useRef(false);
 
-  const proxiesRef = useRef<LetterProxy[]>(
+  const proxies = React.useMemo(() => 
     LETTERS.map((_, i) => ({
       x: SCATTERED_INITIAL[i].x,
       y: SCATTERED_INITIAL[i].y,
@@ -244,12 +246,15 @@ export default function HeroScene({ onReady }: HeroSceneProps) {
       rotY: SCATTERED_INITIAL[i].rotY,
       rotZ: SCATTERED_INITIAL[i].rotZ,
       opacity: 1,
-    }))
-  );
-  const proxies = proxiesRef.current;
-  const cameraTarget = useRef({ x: 0, y: 0.5, z: 10.5 });
+    })),
+  []);
 
-  useEffect(() => { setIsClient(true); }, []);
+  const cameraTargetRef = useRef({ x: 0, y: 0.5, z: 10.5 });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsClient(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleAssemblyComplete = () => {
     assemblyDone.current = true;
@@ -296,7 +301,7 @@ export default function HeroScene({ onReady }: HeroSceneProps) {
             }, segStart + segDur * 0.4);
           });
 
-          scatterTl.to(cameraTarget.current, {
+          scatterTl.to(cameraTargetRef.current, {
             y: -0.3, z: 11.5, duration: 1, ease: 'none',
           }, 0);
         });
@@ -329,7 +334,7 @@ export default function HeroScene({ onReady }: HeroSceneProps) {
       >
         <Scene
           proxies={proxies}
-          cameraTarget={cameraTarget}
+          cameraTargetRef={cameraTargetRef}
           onAssemblyComplete={handleAssemblyComplete}
         />
       </Canvas>
