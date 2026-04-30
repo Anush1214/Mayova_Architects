@@ -3,7 +3,7 @@ import './globals.css';
 import Navbar from '@/components/ui/Navbar';
 
 export const metadata: Metadata = {
-  title: 'MAYOVA Architects — Created To Create',
+  title: 'MAYOVA Architects',
   description:
     'MAYOVA Architects is a contemporary architecture studio based in Udupi, India. Architecture, Interior, Landscaping & Product Designing — Created To Create.',
   keywords: [
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     'India',
   ],
   openGraph: {
-    title: 'MAYOVA Architects — Created To Create',
+    title: 'MAYOVA Architects',
     description:
       'Architecture, Interior, Landscaping & Product Designing — Created To Create.',
     type: 'website',
