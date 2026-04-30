@@ -25,6 +25,9 @@ export const metadata: Metadata = {
       'Architecture, Interior, Landscaping & Product Designing — Created To Create.',
     type: 'website',
   },
+  icons: {
+    icon: '/images/logo/logo-full.png',
+  },
 };
 
 export default function RootLayout({
