@@ -145,7 +145,7 @@ export default function Sidebar() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-6 left-5 z-[60] lg:hidden flex flex-col items-center justify-center w-10 h-10 gap-[5px] cursor-pointer"
+        className="fixed top-6 right-6 z-[60] lg:hidden flex flex-col items-center justify-center w-10 h-10 gap-[5px] cursor-pointer"
         aria-label="Toggle menu"
       >
         <motion.span

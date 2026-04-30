@@ -26,7 +26,7 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 3 }}
-      className="fixed top-0 left-0 right-0 z-50 hidden lg:flex items-center justify-between px-6 py-4 pointer-events-none"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 pointer-events-none"
     >
       {/* Left: Logo → Home */}
       <Link
@@ -46,8 +46,8 @@ export default function Navbar() {
         </span>
       </Link>
 
-      {/* Right: Navigation Links */}
-      <nav className="pointer-events-auto flex items-center gap-8">
+      {/* Right: Navigation Links (Desktop Only) */}
+      <nav className="pointer-events-auto hidden lg:flex items-center gap-8">
         {navLinks.map((link) => (
           <Link
             key={link.label}
