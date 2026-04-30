@@ -1,0 +1,193 @@
+'use client';
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+
+interface ExpandableProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+function ExpandableSection({ title, children }: ExpandableProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border-b border-cream/10 pb-4">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between group cursor-pointer"
+      >
+        <span className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone group-hover:text-cream transition-colors duration-300">
+          {title}
+        </span>
+        <motion.span
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="text-stone text-lg leading-none"
+        >
+          +
+        </motion.span>
+      </button>
+      <motion.div
+        initial={false}
+        animate={{
+          height: open ? 'auto' : 0,
+          opacity: open ? 1 : 0,
+        }}
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="overflow-hidden"
+      >
+        <div className="pt-4 space-y-1">
+          {children}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+export default function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <footer
+      id="contact"
+      className="relative bg-off-black text-cream"
+    >
+      {/* Main Content */}
+      <div className="py-24 lg:py-32">
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+          {/* Header */}
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{
+              duration: 0.8,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            className="font-serif text-4xl lg:text-5xl tracking-wide text-cream leading-tight mb-16"
+          >
+            Created
+            <br />
+            To Create.
+          </motion.h2>
+
+          {/* Expandable Sections — per workflow: Email +, Socials +, Office + */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{
+              duration: 0.8,
+              delay: 0.1,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            className="max-w-xl space-y-4"
+          >
+            <ExpandableSection title="Email">
+              <a
+                href="mailto:vigneshvrao@mayovaarchitect.com"
+                className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+              >
+                vigneshvrao@mayovaarchitect.com
+              </a>
+              <a
+                href="https://www.mayovaarchitect.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+              >
+                www.mayovaarchitect.com
+              </a>
+            </ExpandableSection>
+
+            <ExpandableSection title="Socials">
+              <a
+                href="https://www.instagram.com/mayova_architects"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+              >
+                Instagram — @mayova_architects
+              </a>
+            </ExpandableSection>
+
+            <ExpandableSection title="Office">
+              <p className="font-sans text-sm text-cream/80">
+                Gowri Arcade, 1st Floor
+              </p>
+              <p className="font-sans text-sm text-cream/80">
+                Shiribeedu, Udupi - 576101
+              </p>
+              <p className="font-sans text-sm text-cream/80">
+                Karnataka, India
+              </p>
+              <p className="font-sans text-sm text-cream/80 mt-2">
+                +91 77958-90714
+              </p>
+            </ExpandableSection>
+          </motion.div>
+
+          {/* Services bar */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="mt-20 pt-8 border-t border-cream/10"
+          >
+            <div className="flex flex-wrap items-center justify-center gap-4 lg:gap-8">
+              {['Architecture', 'Interior', 'Landscaping', 'Product Designing'].map((service, i) => (
+                <span key={service} className="flex items-center gap-4 lg:gap-8">
+                  <span className="font-sans text-sm lg:text-base text-cream/50 tracking-wider">
+                    {service}
+                  </span>
+                  {i < 3 && (
+                    <span className="text-cream/20">|</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* BACK TO TOP button — per workflow */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="mt-12 flex justify-center"
+          >
+            <button
+              onClick={scrollToTop}
+              className="group flex items-center gap-3 font-sans text-[11px] tracking-ultra-wide uppercase text-cream/60 hover:text-warm-gold transition-colors duration-500 cursor-pointer"
+            >
+              <span className="inline-block transition-transform duration-300 group-hover:-translate-y-1">↑</span>
+              Back To Top
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Giant MAYOVA Text at Bottom */}
+      <div className="relative overflow-hidden pb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{
+            duration: 1.2,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+          className="max-w-[1400px] mx-auto px-8 lg:px-12"
+        >
+          <h2 className="font-serif text-[12vw] lg:text-[14vw] text-cream/[0.06] leading-none tracking-wider select-none uppercase">
+            MAYOVA
+          </h2>
+        </motion.div>
+      </div>
+    </footer>
+  );
+}
