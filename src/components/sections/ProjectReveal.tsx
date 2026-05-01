@@ -97,7 +97,7 @@ export default function ProjectReveal({ project, index }: ProjectRevealProps) {
                   }}
                 >
                   <Image
-                    src={project.imagePath}
+                    src={project.coverImage}
                     alt={project.title}
                     width={1200}
                     height={800}
@@ -117,13 +117,10 @@ export default function ProjectReveal({ project, index }: ProjectRevealProps) {
               isEven ? 'lg:col-span-5' : 'lg:col-span-5 lg:order-1'
             } flex flex-col justify-center`}
           >
-            {/* Letter + Number */}
+            {/* Number */}
             <div className="flex items-baseline gap-4 mb-6">
-              <span className="font-serif text-7xl lg:text-8xl text-warm-beige leading-none select-none">
-                {project.letter}
-              </span>
               <span className="font-sans text-[10px] tracking-ultra-wide text-stone uppercase">
-                0{project.id}
+                0{index + 1}
               </span>
             </div>
 

@@ -252,7 +252,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
               height={cell * 2}
               className="w-full h-full object-contain"
               priority
-              unoptimized
+              quality={90}
             />
           </div>
         ))}

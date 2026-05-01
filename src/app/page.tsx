@@ -27,12 +27,12 @@ export default function Home() {
       {/* Subtle architectural background behind the logo */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Image
-          src="/images/hero-bg.png"
+          src="/images/hero-bg.jpg"
           alt=""
           fill
           className="object-cover opacity-20"
           priority
-          unoptimized
+          quality={75}
         />
         {/* Gradient overlay to soften edges */}
         <div

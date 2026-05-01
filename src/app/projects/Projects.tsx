@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
@@ -9,11 +8,9 @@ import Sidebar from '@/components/ui/Sidebar';
 import { projects } from '@/data/projects';
 
 const categoryLinks = [
-  { label: 'All Projects', href: '/projects', active: true },
-  { label: 'Interior', href: '/projects/interior' },
-  { label: 'Architecture', href: '/projects/architecture' },
-  { label: 'Planning', href: '/projects/planning' },
-  { label: 'Landscape', href: '/projects/landscape' },
+  { label: 'All Projects', active: true },
+  { label: 'Interior' },
+  { label: 'Commercial' },
 ];
 
 export default function Projects() {
@@ -23,7 +20,7 @@ export default function Projects() {
 
       <PageHeader
         title="Projects"
-        subtitle="A curated selection of work across scales, typologies, and geographies."
+        subtitle="A curated selection of completed work across typologies and scales."
       />
 
       {/* Category Filter */}
@@ -31,17 +28,16 @@ export default function Projects() {
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="flex items-center gap-8 flex-wrap">
             {categoryLinks.map((cat) => (
-              <Link
+              <span
                 key={cat.label}
-                href={cat.href}
                 className={`font-sans text-[11px] tracking-ultra-wide uppercase pb-2 border-b-2 transition-all duration-300 ${
                   cat.active
                     ? 'text-charcoal border-warm-gold'
-                    : 'text-stone border-transparent hover:text-charcoal'
+                    : 'text-stone border-transparent hover:text-charcoal cursor-pointer'
                 }`}
               >
                 {cat.label}
-              </Link>
+              </span>
             ))}
           </div>
         </div>
@@ -59,20 +55,19 @@ export default function Projects() {
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{
                   duration: 0.8,
-                  delay: i * 0.1,
+                  delay: i * 0.12,
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
                 className="group cursor-pointer"
               >
-                {/* Image */}
-                <div className="overflow-hidden mb-5">
+                <div className="overflow-hidden mb-5 relative aspect-[4/3] md:h-[440px] md:aspect-auto">
                   <Image
-                    src={project.imagePath}
+                    src={project.coverImage}
                     alt={project.title}
-                    width={800}
-                    height={600}
-                    className="w-full h-[350px] lg:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
-                    loading="lazy"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
 
@@ -87,13 +82,28 @@ export default function Projects() {
                   </span>
                 </div>
 
-                {/* Title */}
+                {/* Title + subtitle */}
                 <h3 className="font-serif text-2xl text-charcoal mb-1 group-hover:text-stone-dark transition-colors duration-300">
                   {project.title}
                 </h3>
+                <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone/60 mb-3">
+                  {project.subtitle}
+                </p>
+
+                {/* Description preview */}
+                <p className="font-sans text-xs text-stone leading-relaxed max-w-md line-clamp-2">
+                  {project.description}
+                </p>
 
                 {/* Location */}
-                <p className="font-sans text-xs text-stone">{project.location}</p>
+                <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone mt-4">
+                  {project.location}
+                </p>
+
+                {/* Image count badge */}
+                <p className="font-sans text-[9px] tracking-ultra-wide uppercase text-stone/40 mt-1">
+                  {project.images.length} images
+                </p>
               </motion.article>
             ))}
           </div>

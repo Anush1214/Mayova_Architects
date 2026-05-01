@@ -121,46 +121,47 @@ export default function About() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            {teamMembers.map((member, i) => (
-              <motion.div
-                key={member.id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{
-                  duration: 0.8,
-                  delay: i * 0.15,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-                className="group cursor-pointer"
-              >
-                {/* Image */}
-                <div className="overflow-hidden mb-8 bg-warm-beige/30 aspect-[3/4]">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <span className="font-serif text-6xl text-warm-beige">
-                        {member.name.charAt(0)}
-                      </span>
-                      <p className="font-sans text-[9px] tracking-ultra-wide uppercase text-stone mt-4">
-                        Portrait
-                      </p>
-                    </div>
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+            {/* Image Side - Single Portrait */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="relative w-full aspect-[4/5] lg:aspect-[3/4] overflow-hidden bg-warm-beige/30"
+            >
+              <Image 
+                src="/images/about/portraits.jpg" 
+                alt="Founders: Ar. Vignesh V Rao and Ar. Akash Shetty"
+                fill
+                className="object-cover"
+                quality={75}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </motion.div>
 
-                {/* Info */}
-                <h3 className="font-serif text-2xl text-charcoal mb-1 group-hover:text-stone-dark transition-colors duration-300">
-                  {member.name}
-                </h3>
-                <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-warm-gold mb-4">
-                  {member.role}
-                </p>
-                <p className="font-sans text-sm text-stone-dark leading-relaxed">
-                  {member.bio}
-                </p>
-              </motion.div>
-            ))}
+            {/* Bios Side */}
+            <div className="flex flex-col gap-12 lg:gap-16 lg:pt-12">
+              {teamMembers.map((member, i) => (
+                <motion.div
+                  key={member.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.8, delay: i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  <h3 className="font-serif text-3xl text-charcoal mb-2">
+                    {member.name}
+                  </h3>
+                  <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-warm-gold mb-6">
+                    {member.role}
+                  </p>
+                  <p className="font-sans text-sm text-stone-dark leading-relaxed">
+                    {member.bio}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

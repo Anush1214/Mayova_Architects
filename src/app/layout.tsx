@@ -1,5 +1,21 @@
 import type { Metadata } from 'next';
+import { Inter, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+  weight: ['200', '300', '400', '500'],
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif',
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+});
 import Navbar from '@/components/ui/Navbar';
 import CustomCursor from '@/components/ui/CustomCursor';
 
@@ -37,8 +53,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full grain-overlay">
+    <html lang="en" className={`h-full antialiased ${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
+      <body className="min-h-full grain-overlay font-sans">
         <CustomCursor />
         <Navbar />
         {children}
