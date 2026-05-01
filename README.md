@@ -3,7 +3,7 @@
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://mayova-architects.vercel.app/)  
 **[Live Preview: mayova-architects.vercel.app](https://mayova-architects.vercel.app/)**
 
-![![alt text](image.png)](public/preview.png)
+![Mayova Architects Preview](public/image.png)
 
 A high-end, interactive architectural portfolio website built for Mayova Architects. Designed to reflect the premium aesthetic of their brand, this project features fluid animations, magnetic custom cursors, smooth scrolling, and dynamic layout blending to create an immersive user experience akin to top-tier architecture firms.
 
