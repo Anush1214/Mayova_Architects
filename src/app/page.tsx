@@ -43,11 +43,13 @@ export default function Home() {
         />
       </div>
 
-      {/* 2D Logo Animation (fixed, above background) */}
-      <HeroLogo onReady={handleSceneReady} />
+      {/* 2D Logo Animation Section */}
+      <div id="hero-logo-trigger" className="relative w-full h-[160vh] z-30">
+        <HeroLogo onReady={handleSceneReady} />
+      </div>
 
       {/* Scrollable Content */}
-      <main className="relative z-40">
+      <main className="relative z-20">
         <ScrollContainer ref={scrollContainerRef} />
         <Footer />
       </main>

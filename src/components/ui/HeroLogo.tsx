@@ -175,8 +175,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
       clearInterval(check);
 
       requestAnimationFrame(() => {
-        const section = document.getElementById('scroll-section');
-        const trigger = section?.closest('.pin-spacer') || section || document.body;
+        const trigger = document.getElementById('hero-logo-trigger') || document.body;
 
         ctx = gsap.context(() => {
           const shapes = shapeRefs.current.filter(Boolean) as HTMLDivElement[];
@@ -188,8 +187,8 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
             scrollTrigger: {
               trigger,
               start: 'top top',
-              end: '+=1400',
-              scrub: 1.8,
+              end: 'bottom bottom',
+              scrub: 2.5,
             },
           });
 
@@ -226,7 +225,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-30 flex flex-col items-center justify-center pointer-events-none"
+      className="sticky top-0 h-screen w-full flex flex-col items-center justify-center pointer-events-none"
       style={{ paddingBottom: '2vh' }}
     >
       {/* Logo Grid — 6 individual characters */}

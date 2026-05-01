@@ -21,6 +21,25 @@ const serviceLinks = [
 export default function Sidebar() {
   const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDarkBg, setIsDarkBg] = useState(false);
+
+  // Check scroll position for footer
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      const winHeight = window.innerHeight;
+      
+      if (docHeight - (scrollY + winHeight) < 400) {
+        setIsDarkBg(true);
+      } else {
+        setIsDarkBg(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -42,6 +61,10 @@ export default function Sidebar() {
     setMobileOpen(false);
   };
 
+  const textColorClass = isDarkBg ? 'text-cream' : 'text-charcoal';
+  const textHoverClass = isDarkBg ? 'hover:text-white' : 'hover:text-charcoal-dark';
+  const textMutedClass = isDarkBg ? 'text-cream/60' : 'text-charcoal/60';
+
   return (
     <>
       {/* ==================== DESKTOP SIDEBAR ==================== */}
@@ -52,9 +75,13 @@ export default function Sidebar() {
         className="fixed top-0 left-0 z-50 h-screen hidden lg:flex flex-col justify-between py-8 transition-all duration-700 ease-out"
         style={{
           width: hovered ? '240px' : '72px',
-          backgroundColor: hovered ? 'rgba(250, 247, 242, 0.95)' : 'transparent',
+          backgroundColor: hovered 
+            ? (isDarkBg ? 'rgba(44, 44, 44, 0.95)' : 'rgba(250, 247, 242, 0.95)') 
+            : 'transparent',
           backdropFilter: hovered ? 'blur(20px)' : 'none',
-          borderRight: hovered ? '1px solid rgba(0,0,0,0.04)' : '1px solid transparent',
+          borderRight: hovered 
+            ? (isDarkBg ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.04)') 
+            : '1px solid transparent',
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -69,13 +96,13 @@ export default function Sidebar() {
               key={item.label}
               href={item.href}
               onClick={(e) => handleNavClick(e, item.href)}
-              className="group flex items-center gap-3 py-2 rounded-md transition-all duration-300 text-charcoal/70 hover:text-charcoal"
+              className={`nav-link px-2 group flex items-center gap-3 py-2 rounded-full transition-all duration-300 ${textMutedClass} ${textHoverClass}`}
             >
               <span className="font-sans text-[10px] tracking-[0.25em] uppercase shrink-0 w-5 text-center opacity-70 group-hover:opacity-100 transition-opacity">
                 {item.num}
               </span>
               <span
-                className="font-sans text-[13px] tracking-[0.15em] uppercase transition-all duration-500"
+                className={`font-sans text-[13px] tracking-[0.15em] uppercase transition-all duration-500`}
                 style={{
                   opacity: hovered ? 1 : 0,
                   width: hovered ? 'auto' : 0,
@@ -93,13 +120,13 @@ export default function Sidebar() {
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.3 }}
-              className="mt-3 pt-3 border-t border-charcoal/5 flex flex-col gap-2"
+              className={`mt-3 pt-3 border-t ${isDarkBg ? 'border-white/10' : 'border-charcoal/5'} flex flex-col gap-2`}
             >
               {serviceLinks.map((cat) => (
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className="font-sans text-[11px] tracking-[0.2em] uppercase text-charcoal/50 hover:text-charcoal transition-colors duration-300 pl-8"
+                  className={`nav-link px-2 py-1 rounded-full font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-300 ml-8 ${isDarkBg ? 'text-cream/50' : 'text-charcoal/50'} ${textHoverClass}`}
                 >
                   {cat.label}
                 </Link>
@@ -120,17 +147,17 @@ export default function Sidebar() {
                 href="https://www.instagram.com/mayova_architects/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-sans text-[10px] tracking-[0.2em] uppercase text-charcoal/60 hover:text-charcoal transition-colors duration-300"
+                className={`nav-link px-3 py-1 rounded-full font-sans text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 ${textMutedClass} ${textHoverClass}`}
               >
                 @mayova_architects
               </a>
-              <span className="font-sans text-[10px] tracking-[0.15em] text-stone/40">
+              <span className={`font-sans text-[10px] tracking-[0.15em] transition-colors duration-500 ${isDarkBg ? 'text-cream/40' : 'text-stone/40'}`}>
                 Udupi, India
               </span>
             </motion.div>
           ) : (
             <span
-              className="font-sans text-[9px] tracking-[0.3em] text-stone/40 uppercase"
+              className={`font-sans text-[9px] tracking-[0.3em] uppercase transition-colors duration-500 ${isDarkBg ? 'text-cream/40' : 'text-stone/40'}`}
               style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
             >
               Udupi
@@ -145,7 +172,7 @@ export default function Sidebar() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-6 right-6 z-[60] lg:hidden flex flex-col items-center justify-center w-10 h-10 gap-[5px] cursor-pointer"
+        className="nav-link fixed top-6 right-6 z-[60] lg:hidden flex flex-col items-center justify-center w-12 h-12 gap-[5px] cursor-pointer rounded-full"
         aria-label="Toggle menu"
       >
         <motion.span
@@ -153,20 +180,18 @@ export default function Sidebar() {
             rotate: mobileOpen ? 45 : 0,
             y: mobileOpen ? 7 : 0,
           }}
-          className="block w-6 h-[1.5px] bg-charcoal origin-center transition-colors"
-          style={{ backgroundColor: mobileOpen ? '#FAF7F2' : '#2C2C2C' }}
+          className={`block w-6 h-[1.5px] origin-center transition-colors duration-500 ${isDarkBg ? 'bg-cream' : 'bg-charcoal'}`}
         />
         <motion.span
           animate={{ opacity: mobileOpen ? 0 : 1 }}
-          className="block w-6 h-[1.5px] bg-charcoal"
+          className={`block w-6 h-[1.5px] transition-colors duration-500 ${isDarkBg ? 'bg-cream' : 'bg-charcoal'}`}
         />
         <motion.span
           animate={{
             rotate: mobileOpen ? -45 : 0,
             y: mobileOpen ? -7 : 0,
           }}
-          className="block w-6 h-[1.5px] bg-charcoal origin-center transition-colors"
-          style={{ backgroundColor: mobileOpen ? '#FAF7F2' : '#2C2C2C' }}
+          className={`block w-6 h-[1.5px] origin-center transition-colors duration-500 ${isDarkBg ? 'bg-cream' : 'bg-charcoal'}`}
         />
       </motion.button>
 

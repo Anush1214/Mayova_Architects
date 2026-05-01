@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/ui/Navbar';
+import CustomCursor from '@/components/ui/CustomCursor';
 
 export const metadata: Metadata = {
   title: 'MAYOVA Architects',
@@ -37,7 +38,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full grain-overlay cursor-smooth">
+      <body className="min-h-full grain-overlay">
+        <CustomCursor />
         <Navbar />
         {children}
       </body>

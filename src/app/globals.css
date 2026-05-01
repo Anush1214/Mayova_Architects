@@ -214,3 +214,9 @@ body {
 .sidebar-nav-item:hover::after {
   width: 100%;
 }
+
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
