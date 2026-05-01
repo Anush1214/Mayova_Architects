@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mayova Architects Portfolio
 
-## Getting Started
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://mayova-architects.vercel.app/)  
+**[Live Preview: mayova-architects.vercel.app](https://mayova-architects.vercel.app/)**
 
-First, run the development server:
+![Mayova Architects Preview](public/preview.png) *(Note: Replace with actual screenshot)*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+A high-end, interactive architectural portfolio website built for Mayova Architects. Designed to reflect the premium aesthetic of their brand, this project features fluid animations, magnetic custom cursors, smooth scrolling, and dynamic layout blending to create an immersive user experience akin to top-tier architecture firms.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌟 Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Premium Aesthetic**: Clean, modern typography and minimalist layouts that put architectural work front and center.
+- **Advanced Animations**: Powered by GSAP and Framer Motion for seamless page transitions, logo reveals, and micro-interactions.
+- **Custom Magnetic Cursor**: Interactive cursor that snaps to interactive elements (links, buttons, sidebar toggles) for an engaging UX.
+- **Smooth Scrolling**: Implemented using Lenis for a buttery-smooth scrolling experience.
+- **Dynamic Color Blending**: Navigation and sidebars use `mix-blend-difference` to maintain visibility against varying dynamic backgrounds and images.
+- **3D Integrations**: Built-in support for WebGL and 3D scenes using Three.js and React Three Fiber/Drei.
+- **Responsive Design**: Flawlessly adapts to all screen sizes, from mobile devices to ultrawide desktop monitors.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Library**: [React](https://reactjs.org/) 19
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Animations**: [GSAP](https://gsap.com/) & [Framer Motion](https://www.framer.com/motion/)
+- **3D Rendering**: [Three.js](https://threejs.org/) & [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction)
+- **Smooth Scroll**: [Lenis](https://lenis.darkroom.engineering/)
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Make sure you have Node.js installed (v18+ recommended) and `npm` or `yarn`.
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Anush1214/Mayova_Architects.git
+   cd MAYOVA
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## 📂 Project Structure
+
+- `src/app`: Next.js App Router pages and layouts.
+- `src/components`: Reusable UI components (Navbar, Sidebar, Custom Cursor, HeroLogo).
+- `public`: Static assets (images, fonts, branding materials).
+
+## 📝 License
+
+This project is private and intended for use by Mayova Architects. All rights reserved.
