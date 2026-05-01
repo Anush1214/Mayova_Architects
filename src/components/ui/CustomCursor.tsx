@@ -76,10 +76,19 @@ export default function CustomCursor() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 z-[9999] pointer-events-none flex items-center justify-center mix-blend-difference"
+      className={`fixed top-0 left-0 pointer-events-none flex items-center justify-center ${
+        hoverTarget ? 'z-[50]' : 'z-[9999] mix-blend-difference'
+      }`}
       style={{
-        backgroundColor: isHovering ? 'transparent' : 'rgba(255, 255, 255, 1)',
-        border: isHovering ? '1.5px solid rgba(255, 255, 255, 1)' : 'none',
+        backgroundColor: hoverTarget 
+          ? 'rgba(255, 255, 255, 0.15)' 
+          : (isHovering ? 'transparent' : 'rgba(255, 255, 255, 1)'),
+        backdropFilter: hoverTarget ? 'blur(20px) saturate(200%) brightness(1.1)' : 'none',
+        WebkitBackdropFilter: hoverTarget ? 'blur(20px) saturate(200%) brightness(1.1)' : 'none',
+        border: hoverTarget
+          ? '1.5px solid rgba(255, 255, 255, 0.4)'
+          : (isHovering ? '1.5px solid rgba(255, 255, 255, 1)' : 'none'),
+        boxShadow: hoverTarget ? '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.15)' : 'none',
         borderRadius,
       }}
       animate={{

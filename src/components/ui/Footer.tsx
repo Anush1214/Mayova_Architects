@@ -158,11 +158,11 @@ export default function Footer() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="mt-12 flex justify-center"
+            className="mt-12 flex justify-center relative z-[60]"
           >
             <button
               onClick={scrollToTop}
-              className="group flex items-center gap-3 font-sans text-[11px] tracking-ultra-wide uppercase text-cream/60 hover:text-warm-gold transition-colors duration-500 cursor-pointer"
+              className="nav-link relative z-[60] px-6 py-3 rounded-full group flex items-center gap-3 font-sans text-[11px] tracking-ultra-wide uppercase text-cream/60 hover:text-warm-gold transition-colors duration-500 cursor-pointer"
             >
               <span className="inline-block transition-transform duration-300 group-hover:-translate-y-1">↑</span>
               Back To Top

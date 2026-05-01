@@ -49,7 +49,7 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 3 }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 pointer-events-none transition-colors duration-500"
+      className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-4 pointer-events-none transition-colors duration-500"
     >
       {/* Left: Logo → Home */}
       <Link
@@ -64,7 +64,7 @@ export default function Navbar() {
           className={`object-contain transition-all duration-500 group-hover:scale-105 ${isDarkBg ? 'drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]' : ''}`}
           unoptimized
         />
-        <span className={`font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}>
+        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-all duration-500 opacity-90 ${textColorClass} ${textHoverClass} group-hover:scale-110 group-hover:tracking-[0.25em]`}>
           MAYOVA
         </span>
       </Link>
@@ -76,9 +76,11 @@ export default function Navbar() {
             key={link.label}
             href={link.href}
             onClick={(e) => handleClick(e, link.href)}
-            className={`nav-link px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
+            className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
           >
-            {link.label}
+            <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
+              {link.label}
+            </span>
           </Link>
         ))}
       </nav>

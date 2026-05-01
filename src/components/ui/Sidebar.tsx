@@ -67,12 +67,12 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ==================== DESKTOP SIDEBAR ==================== */}
-      <motion.aside
+      {/* ==================== DESKTOP SIDEBAR BACKGROUND ==================== */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
-        className="fixed top-0 left-0 z-50 h-screen hidden lg:flex flex-col justify-between py-8 transition-all duration-700 ease-out"
+        className="fixed top-0 left-0 z-[40] h-screen hidden lg:block transition-all duration-700 ease-out pointer-events-none"
         style={{
           width: hovered ? '240px' : '72px',
           backgroundColor: hovered 
@@ -83,6 +83,15 @@ export default function Sidebar() {
             ? (isDarkBg ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.04)') 
             : '1px solid transparent',
         }}
+      />
+
+      {/* ==================== DESKTOP SIDEBAR CONTENT ==================== */}
+      <motion.aside
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 3 }}
+        className="fixed top-0 left-0 z-[60] h-screen hidden lg:flex flex-col justify-between py-8 transition-all duration-700 ease-out"
+        style={{ width: hovered ? '240px' : '72px' }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
@@ -109,7 +118,9 @@ export default function Sidebar() {
                   transform: hovered ? 'translateX(0)' : 'translateX(-8px)',
                 }}
               >
-                {item.label}
+                <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.2em]">
+                  {item.label}
+                </span>
               </span>
             </Link>
           ))}
@@ -126,9 +137,11 @@ export default function Sidebar() {
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className={`nav-link px-2 py-1 rounded-full font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-300 ml-8 ${isDarkBg ? 'text-cream/50' : 'text-charcoal/50'} ${textHoverClass}`}
+                  className={`nav-link group px-2 py-1 rounded-full font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-300 ml-8 ${isDarkBg ? 'text-cream/50' : 'text-charcoal/50'} ${textHoverClass}`}
                 >
-                  {cat.label}
+                  <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
+                    {cat.label}
+                  </span>
                 </Link>
               ))}
             </motion.div>
@@ -147,9 +160,11 @@ export default function Sidebar() {
                 href="https://www.instagram.com/mayova_architects/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`nav-link px-3 py-1 rounded-full font-sans text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 ${textMutedClass} ${textHoverClass}`}
+                className={`nav-link group px-3 py-1 rounded-full font-sans text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 ${textMutedClass} ${textHoverClass}`}
               >
-                @mayova_architects
+                <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
+                  @mayova_architects
+                </span>
               </a>
               <span className={`font-sans text-[10px] tracking-[0.15em] transition-colors duration-500 ${isDarkBg ? 'text-cream/40' : 'text-stone/40'}`}>
                 Udupi, India
@@ -172,7 +187,7 @@ export default function Sidebar() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="nav-link fixed top-6 right-6 z-[60] lg:hidden flex flex-col items-center justify-center w-12 h-12 gap-[5px] cursor-pointer rounded-full"
+        className="nav-link fixed top-6 right-6 z-[65] lg:hidden flex flex-col items-center justify-center w-12 h-12 gap-[5px] cursor-pointer rounded-full"
         aria-label="Toggle menu"
       >
         <motion.span
@@ -203,7 +218,7 @@ export default function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[55] lg:hidden flex flex-col justify-center items-center"
+            className="fixed inset-0 z-[60] lg:hidden flex flex-col justify-center items-center"
             style={{ backgroundColor: '#1a1a1a' }}
           >
             {/* Logo */}
