@@ -25,7 +25,7 @@ export default function Home() {
       <Sidebar />
 
       {/* Subtle architectural background behind the logo */}
-      <div className="fixed inset-0 z-20 pointer-events-none">
+      <div className="fixed inset-0 z-0 pointer-events-none">
         <Image
           src="/images/hero-bg.png"
           alt=""
@@ -44,12 +44,12 @@ export default function Home() {
       </div>
 
       {/* 2D Logo Animation Section */}
-      <div id="hero-logo-trigger" className="relative w-full h-[160vh] z-30">
+      <div id="hero-logo-trigger" className="relative w-full h-[160vh] z-10">
         <HeroLogo onReady={handleSceneReady} />
       </div>
 
       {/* Scrollable Content */}
-      <main className="relative z-20">
+      <main className="relative z-20 -mt-[60vh]">
         <ScrollContainer ref={scrollContainerRef} />
         <Footer />
       </main>

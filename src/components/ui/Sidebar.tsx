@@ -207,13 +207,13 @@ export default function Sidebar() {
             style={{ backgroundColor: '#1a1a1a' }}
           >
             {/* Logo */}
-            <div className="absolute top-6 right-5">
+            <div className="absolute top-4 left-6">
               <Image
                 src="/images/logo/logo-full.png"
                 alt="MAYOVA"
                 width={36}
                 height={54}
-                className="object-contain"
+                className="object-contain drop-shadow-[0_0_12px_rgba(250,247,242,0.15)]"
                 unoptimized
               />
             </div>
