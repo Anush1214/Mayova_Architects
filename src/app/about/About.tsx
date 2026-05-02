@@ -156,9 +156,19 @@ export default function About() {
                   <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-warm-gold mb-6">
                     {member.role}
                   </p>
-                  <p className="font-sans text-sm text-stone-dark leading-relaxed">
+                  <p className="font-sans text-sm text-stone-dark leading-relaxed mb-4">
                     {member.bio}
                   </p>
+                  {member.linkedin && (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block font-sans text-sm text-stone-dark hover:text-warm-gold underline decoration-warm-gold/30 hover:decoration-warm-gold transition-colors duration-300"
+                    >
+                      Connect on LinkedIn
+                    </a>
+                  )}
                 </motion.div>
               ))}
             </div>

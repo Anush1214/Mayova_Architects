@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ExpandableProps {
   title: string;
@@ -46,89 +46,150 @@ function ExpandableSection({ title, children }: ExpandableProps) {
 }
 
 export default function Footer() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const [isFading, setIsFading] = useState(false);
+
+  const scrollToTop = useCallback(() => {
+    // Fade out
+    setIsFading(true);
+    setTimeout(() => {
+      // Instant jump — bypasses every GSAP-pinned project section
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      // Fade back in
+      setTimeout(() => setIsFading(false), 80);
+    }, 400);
+  }, []);
 
   return (
-    <footer
-      id="contact"
-      className="relative bg-off-black text-cream"
-    >
+    <>
+      {/* Page-level fade overlay */}
+      <AnimatePresence>
+        {isFading && (
+          <motion.div
+            key="back-to-top-fade"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+            className="fixed inset-0 z-[9999] bg-off-black pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+
+      <footer
+        id="contact"
+        className="relative bg-off-black text-cream"
+      >
       {/* Main Content */}
       <div className="py-24 lg:py-32">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          {/* Header */}
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{
-              duration: 0.8,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            }}
-            className="font-serif text-4xl lg:text-5xl tracking-wide text-cream leading-tight mb-16"
-          >
-            Created
-            <br />
-            To Create.
-          </motion.h2>
-
-          {/* Expandable Sections — per workflow: Email +, Socials +, Office + */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{
-              duration: 0.8,
-              delay: 0.1,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            }}
-            className="max-w-xl space-y-4"
-          >
-            <ExpandableSection title="Email">
-              <a
-                href="mailto:vigneshvrao@mayovaarchitect.com"
-                className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+          <div className="flex flex-col lg:flex-row justify-between gap-16 lg:gap-24">
+            <div className="flex-1 lg:max-w-xl">
+              {/* Header */}
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                className="font-serif text-4xl lg:text-5xl tracking-wide text-cream leading-tight mb-16"
               >
-                vigneshvrao@mayovaarchitect.com
-              </a>
-              <a
-                href="https://www.mayovaarchitect.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
-              >
-                www.mayovaarchitect.com
-              </a>
-            </ExpandableSection>
+                Created
+                <br />
+                To Create.
+              </motion.h2>
 
-            <ExpandableSection title="Socials">
-              <a
-                href="https://www.instagram.com/mayova_architects"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+              {/* Expandable Sections — per workflow: Email +, Socials +, Office + */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.1,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                className="space-y-4"
               >
-                Instagram — @mayova_architects
-              </a>
-            </ExpandableSection>
+                <ExpandableSection title="Email">
+                  <a
+                    href="mailto:vigneshvrao@mayovaarchitect.com"
+                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+                  >
+                    vigneshvrao@mayovaarchitect.com
+                  </a>
+                  <a
+                    href="https://www.mayovaarchitect.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+                  >
+                    www.mayovaarchitect.com
+                  </a>
+                </ExpandableSection>
 
-            <ExpandableSection title="Office">
-              <p className="font-sans text-sm text-cream/80">
-                Gowri Arcade, 1st Floor
-              </p>
-              <p className="font-sans text-sm text-cream/80">
-                Shiribeedu, Udupi - 576101
-              </p>
-              <p className="font-sans text-sm text-cream/80">
-                Karnataka, India
-              </p>
-              <p className="font-sans text-sm text-cream/80 mt-2">
-                +91 77958-90714
-              </p>
-            </ExpandableSection>
-          </motion.div>
+                <ExpandableSection title="Socials">
+                  <a
+                    href="https://www.instagram.com/mayova_architects"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+                  >
+                    Instagram — @mayova_architects
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/mayova-architects/?originalSubdomain=in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500 mt-2"
+                  >
+                    LinkedIn — Mayova Architects
+                  </a>
+                </ExpandableSection>
+
+                <ExpandableSection title="Office">
+                  <p className="font-sans text-sm text-cream/80">
+                    Gowri Arcade, 1st Floor
+                  </p>
+                  <p className="font-sans text-sm text-cream/80">
+                    Shiribeedu, Udupi - 576101
+                  </p>
+                  <p className="font-sans text-sm text-cream/80">
+                    Karnataka, India
+                  </p>
+                  <p className="font-sans text-sm text-cream/80 mt-2">
+                    +91 77958-90714
+                  </p>
+                </ExpandableSection>
+              </motion.div>
+            </div>
+
+            {/* Map Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{
+                duration: 0.8,
+                delay: 0.2,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+              className="flex-1 w-full h-[300px] lg:h-auto min-h-[300px] rounded-lg overflow-hidden border border-cream/10 relative group mt-8 lg:mt-0"
+            >
+              <div className="absolute inset-0 bg-off-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none z-10"></div>
+              <iframe 
+                src="https://maps.google.com/maps?q=1st%20floor,%20Mayova%20Architects%20Gowri%20Arcade,%20Bananje,%20Brahmagiri,%20Udupi,%20Karnataka%20576101,%20India&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={true} 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 w-full h-full grayscale invert opacity-70 group-hover:grayscale-0 group-hover:invert-0 group-hover:opacity-100 transition-all duration-700 ease-in-out"
+              ></iframe>
+            </motion.div>
+          </div>
 
           {/* Services bar */}
           <motion.div
@@ -189,5 +250,6 @@ export default function Footer() {
         </motion.div>
       </div>
     </footer>
+    </>
   );
 }

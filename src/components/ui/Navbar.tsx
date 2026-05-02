@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { projects } from '@/data/projects';
 
 const navLinks = [
-  { label: 'Home', href: '/' },
   { label: 'Projects', href: '/projects' },
   { label: 'News', href: '/news' },
   { label: 'About', href: '/about' },
@@ -14,6 +15,31 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const filteredProjects = projects.filter(p => 
+    p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchSelect = (projectTitle: string) => {
+    setSearchQuery('');
+    setIsSearchOpen(false);
+    const id = `project-anchor-${projectTitle.replace(/\s+/g, '-').toLowerCase()}`;
+    
+    if (pathname === '/') {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      router.push(`/#${id}`);
+    }
+  };
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
@@ -70,7 +96,59 @@ export default function Navbar() {
       </Link>
 
       {/* Right: Navigation Links (Desktop Only) */}
-      <nav className="pointer-events-auto hidden lg:flex items-center gap-8">
+      <nav className="pointer-events-auto hidden lg:flex items-center gap-8 relative">
+        {/* Quick Search */}
+        <div className="relative">
+          <button
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
+          >
+            <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
+              {isSearchOpen ? 'Close Search' : 'Quick Search'}
+            </span>
+          </button>
+          
+          <AnimatePresence>
+            {isSearchOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-full right-0 mt-4 w-[280px] bg-cream border border-stone/20 shadow-2xl rounded-lg overflow-hidden"
+              >
+                <div className="p-3 border-b border-stone/10 bg-cream">
+                  <input 
+                    type="text" 
+                    autoFocus
+                    placeholder="Search projects..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent border-none outline-none font-sans text-sm text-charcoal placeholder:text-stone/50"
+                  />
+                </div>
+                <div className="max-h-[300px] overflow-y-auto custom-scrollbar bg-cream">
+                  {filteredProjects.length > 0 ? (
+                    filteredProjects.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => handleSearchSelect(p.title)}
+                        className="w-full text-left px-4 py-3 hover:bg-warm-gold/10 transition-colors border-b border-stone/5 last:border-0"
+                      >
+                        <p className="font-serif text-charcoal text-sm">{p.title}</p>
+                        <p className="font-sans text-[9px] uppercase tracking-wider text-stone/70 mt-1">{p.category}</p>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-6 text-center">
+                      <p className="font-sans text-xs text-stone">No projects found.</p>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {navLinks.map((link) => (
           <Link
             key={link.label}

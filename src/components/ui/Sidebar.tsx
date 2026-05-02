@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname, useRouter } from 'next/navigation';
+import { projects } from '@/data/projects';
 
 const navItems = [
   { num: '01', label: 'Projects', href: '/projects' },
@@ -22,6 +24,29 @@ export default function Sidebar() {
   const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isDarkBg, setIsDarkBg] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const filteredProjects = projects.filter(p => 
+    p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchSelect = (projectTitle: string) => {
+    setSearchQuery('');
+    setMobileOpen(false);
+    const id = `project-anchor-${projectTitle.replace(/\s+/g, '-').toLowerCase()}`;
+    
+    if (pathname === '/') {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      router.push(`/#${id}`);
+    }
+  };
 
   // Check scroll position for footer
   useEffect(() => {
@@ -233,8 +258,46 @@ export default function Sidebar() {
               />
             </div>
 
+            {/* Quick Search */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="w-full max-w-[280px] mb-8 relative z-[70]"
+            >
+              <div className="relative">
+                <input 
+                  type="text" 
+                  placeholder="Quick search projects..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-transparent border-b border-cream/30 pb-2 outline-none font-sans text-sm text-cream placeholder:text-cream/40 text-center transition-colors focus:border-cream"
+                />
+                {searchQuery && (
+                  <div className="absolute top-full left-0 right-0 mt-4 max-h-[250px] overflow-y-auto bg-[#222] border border-cream/10 rounded-lg custom-scrollbar shadow-2xl">
+                    {filteredProjects.length > 0 ? (
+                      filteredProjects.map((p) => (
+                        <button
+                          key={p.id}
+                          onClick={() => handleSearchSelect(p.title)}
+                          className="w-full text-center px-4 py-3 hover:bg-cream/10 transition-colors border-b border-cream/5 last:border-0"
+                        >
+                          <p className="font-serif text-cream text-sm">{p.title}</p>
+                          <p className="font-sans text-[9px] uppercase tracking-wider text-warm-gold mt-1">{p.category}</p>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-4 py-4 text-center">
+                        <p className="font-sans text-xs text-cream/50">No projects found.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
             {/* Nav Items */}
-            <nav className="flex flex-col items-center gap-8">
+            <nav className="flex flex-col items-center gap-8 relative z-[60]">
               {navItems.map((item, i) => (
                 <motion.div
                   key={item.label}

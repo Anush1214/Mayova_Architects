@@ -85,7 +85,10 @@ function ProjectSection({ project, projectIndex, isRTL, showScrollHint }: {
   const images = isRTL ? [...project.images].reverse() : project.images;
 
   return (
-    <div ref={pinnedRef} className="relative w-full h-screen overflow-hidden bg-cream">
+    <>
+      {/* Anchor for scrolling */}
+      <div id={`project-anchor-${project.title.replace(/\s+/g, '-').toLowerCase()}`} className="absolute" style={{ transform: 'translateY(-100px)' }}></div>
+      <div id={`project-${project.id}`} ref={pinnedRef} className="relative w-full h-screen overflow-hidden bg-cream">
       {/* Scroll hint — only on first section */}
       {showScrollHint && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-20 pointer-events-none">
@@ -127,6 +130,7 @@ function ProjectSection({ project, projectIndex, isRTL, showScrollHint }: {
         )}
       </div>
     </div>
+    </>
   );
 }
 

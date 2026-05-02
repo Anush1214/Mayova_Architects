@@ -4,6 +4,7 @@ export interface TeamMember {
   role: string;
   bio: string;
   imagePath: string;
+  linkedin?: string;
 }
 
 export const teamMembers: TeamMember[] = [
@@ -13,13 +14,15 @@ export const teamMembers: TeamMember[] = [
     role: 'Principal Architect & Founder',
     bio: 'With a passion for creating spaces that harmonize with their environment, Ar. Vignesh V Rao founded MAYOVA Architects with a vision to bring innovative and thoughtful design to every project. His work spans architecture, interior design, landscaping, and product design.',
     imagePath: '/images/about/portraits.jpg',
+    linkedin: 'https://www.linkedin.com/in/vignesh-rao-452115213/',
   },
   {
     id: 2,
-    name: 'Ar. Akash Shetty',
+    name: 'Ar. Akash N Shetty',
     role: 'Principal Architect & Founder',
-    bio: 'Sharing a profound belief that every space tells a story, Ar. Akash Shetty co-founded MAYOVA Architects to craft environments where form follows meaning.',
+    bio: 'Sharing a profound belief that every space tells a story, Ar. Akash N Shetty co-founded MAYOVA Architects to craft environments where form follows meaning.',
     imagePath: '/images/about/portraits.jpg',
+    linkedin: 'https://www.linkedin.com/in/ar-akash-n-shetty-76794b1a0/',
   },
 ];
 
