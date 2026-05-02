@@ -7,28 +7,7 @@ import Footer from '@/components/ui/Footer';
 import Sidebar from '@/components/ui/Sidebar';
 import { teamMembers } from '@/data/siteData';
 
-const disciplines = [
-  {
-    title: 'Architecture',
-    description: 'Creating structures that stand as statements of purpose — where form follows meaning, not merely function.',
-    imagePath: '/images/projects/project-1.png',
-  },
-  {
-    title: 'Interior',
-    description: 'Crafting interior environments where every surface, material, and light source contributes to the human experience.',
-    imagePath: '/images/projects/project-2.png',
-  },
-  {
-    title: 'Planning',
-    description: 'Designing master plans that shape communities — integrating public space, nature, and infrastructure.',
-    imagePath: '/images/projects/project-3.png',
-  },
-  {
-    title: 'Landscape',
-    description: 'Extending architecture into the earth — gardens, terraces, and outdoor spaces that blur the boundary between built and natural.',
-    imagePath: '/images/projects/project-4.png',
-  },
-];
+
 
 export default function About() {
   return (
@@ -221,57 +200,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Disciplines: Landscape / Interior / Planning / Architecture */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-6 mb-16"
-          >
-            <div className="w-16 h-px bg-warm-gold" />
-            <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone">
-              Disciplines
-            </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {disciplines.map((discipline, i) => (
-              <motion.div
-                key={discipline.title}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{
-                  duration: 0.8,
-                  delay: i * 0.1,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-                className="group"
-              >
-                <div className="overflow-hidden mb-6">
-                  <Image
-                    src={discipline.imagePath}
-                    alt={discipline.title}
-                    width={800}
-                    height={500}
-                    className="w-full h-[280px] object-cover transition-transform duration-700 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <h3 className="font-serif text-2xl text-charcoal mb-2">
-                  {discipline.title}
-                </h3>
-                <p className="font-sans text-sm text-stone-dark leading-relaxed">
-                  {discipline.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>
