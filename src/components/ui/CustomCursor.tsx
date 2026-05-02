@@ -76,26 +76,31 @@ export default function CustomCursor() {
   return (
     <>
       {/* ── Glass pill: snap to nav-link, NO blur (text must stay readable) ── */}
-      {hoverTarget && (
-        <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9998]"
-          style={{
-            borderRadius: '9999px',
-            backgroundColor: 'rgba(255, 255, 255, 0.10)',
-            border: '1px solid rgba(255, 255, 255, 0.35)',
-            boxShadow:
-              '0 2px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.20)',
-            // NO backdropFilter — blur destroys text readability
-          }}
-          animate={{ x, y, width, height }}
-          transition={{
-            x: { type: 'spring', damping: 28, stiffness: 280 },
-            y: { type: 'spring', damping: 28, stiffness: 280 },
-            width: { type: 'spring', damping: 30, stiffness: 300, mass: 0.5 },
-            height: { type: 'spring', damping: 30, stiffness: 300, mass: 0.5 },
-          }}
-        />
-      )}
+      <motion.div
+        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        style={{
+          borderRadius: '9999px',
+          backgroundColor: 'rgba(255, 255, 255, 0.10)',
+          border: '1px solid rgba(255, 255, 255, 0.35)',
+          boxShadow:
+            '0 2px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.20)',
+          // NO backdropFilter — blur destroys text readability
+        }}
+        animate={{ 
+          opacity: hoverTarget ? 1 : 0,
+          x: hoverTarget ? hoverTarget.left : mousePosition.x - 20, 
+          y: hoverTarget ? hoverTarget.top : mousePosition.y - 20, 
+          width: hoverTarget ? hoverTarget.width : 40, 
+          height: hoverTarget ? hoverTarget.height : 40 
+        }}
+        transition={{
+          opacity: { duration: 0.15 },
+          x: { type: 'spring', damping: 28, stiffness: 280 },
+          y: { type: 'spring', damping: 28, stiffness: 280 },
+          width: { type: 'spring', damping: 30, stiffness: 300, mass: 0.5 },
+          height: { type: 'spring', damping: 30, stiffness: 300, mass: 0.5 },
+        }}
+      />
 
       {/* ── Dot / hover ring: mix-blend-difference = always readable ── */}
       <motion.div
