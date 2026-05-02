@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useRef, useEffect } from 'react';
+import { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
@@ -54,7 +54,9 @@ function ProjectSection({ project, projectIndex, isRTL, showScrollHint }: {
   const pinnedRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+  useIsomorphicLayoutEffect(() => {
     const pinned = pinnedRef.current;
     const wrapper = wrapperRef.current;
     if (!pinned || !wrapper) return;

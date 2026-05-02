@@ -23,6 +23,7 @@ const serviceLinks = [
 export default function Sidebar() {
   const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchMobileOpen, setSearchMobileOpen] = useState(false);
   const [isDarkBg, setIsDarkBg] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function Sidebar() {
   const handleSearchSelect = (projectTitle: string) => {
     setSearchQuery('');
     setMobileOpen(false);
+    setSearchMobileOpen(false);
     const id = `project-anchor-${projectTitle.replace(/\s+/g, '-').toLowerCase()}`;
     
     if (pathname === '/') {
@@ -206,13 +208,76 @@ export default function Sidebar() {
         </div>
       </motion.aside>
 
+      {/* ==================== MOBILE QUICK SEARCH ==================== */}
+      <div className="fixed top-6 right-[4.5rem] z-[65] lg:hidden pointer-events-none flex flex-col items-end">
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 3 }}
+          onClick={() => {
+            setSearchMobileOpen(!searchMobileOpen);
+            if (mobileOpen) setMobileOpen(false);
+          }}
+          className={`nav-link pointer-events-auto flex items-center justify-center w-12 h-12 cursor-pointer rounded-full transition-colors duration-500`}
+          aria-label="Toggle mobile search"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isDarkBg ? 'text-cream' : 'text-charcoal'}>
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </motion.button>
+
+        <AnimatePresence>
+          {searchMobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`pointer-events-auto mt-2 w-[280px] ${isDarkBg ? 'bg-[#222] border-cream/10' : 'bg-cream border-stone/20'} border shadow-2xl rounded-lg overflow-hidden`}
+            >
+              <div className={`p-3 border-b ${isDarkBg ? 'border-cream/10' : 'border-stone/10'}`}>
+                <input 
+                  type="text" 
+                  autoFocus
+                  placeholder="Search projects..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`w-full bg-transparent border-none outline-none font-sans text-sm ${isDarkBg ? 'text-cream placeholder:text-cream/40' : 'text-charcoal placeholder:text-stone/50'}`}
+                />
+              </div>
+              <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                {filteredProjects.length > 0 ? (
+                  filteredProjects.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => handleSearchSelect(p.title)}
+                      className={`w-full text-left px-4 py-3 transition-colors border-b last:border-0 ${isDarkBg ? 'hover:bg-cream/10 border-cream/5 text-cream' : 'hover:bg-warm-gold/10 border-stone/5 text-charcoal'}`}
+                    >
+                      <p className="font-serif text-sm">{p.title}</p>
+                      <p className={`font-sans text-[9px] uppercase tracking-wider mt-1 ${isDarkBg ? 'text-warm-gold' : 'text-stone/70'}`}>{p.category}</p>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-6 text-center">
+                    <p className={`font-sans text-xs ${isDarkBg ? 'text-cream/50' : 'text-stone'}`}>No projects found.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       {/* ==================== MOBILE HAMBURGER BUTTON ==================== */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="nav-link fixed top-6 right-6 z-[65] lg:hidden flex flex-col items-center justify-center w-12 h-12 gap-[5px] cursor-pointer rounded-full"
+        onClick={() => {
+          setMobileOpen(!mobileOpen);
+          if (searchMobileOpen) setSearchMobileOpen(false);
+        }}
+        className="nav-link fixed top-6 right-6 z-[65] lg:hidden flex flex-col items-center justify-center w-12 h-12 gap-[5px] cursor-pointer rounded-full pointer-events-auto"
         aria-label="Toggle menu"
       >
         <motion.span
@@ -257,44 +322,6 @@ export default function Sidebar() {
                 unoptimized
               />
             </div>
-
-            {/* Quick Search */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-              className="w-full max-w-[280px] mb-8 relative z-[70]"
-            >
-              <div className="relative">
-                <input 
-                  type="text" 
-                  placeholder="Quick search projects..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-b border-cream/30 pb-2 outline-none font-sans text-sm text-cream placeholder:text-cream/40 text-center transition-colors focus:border-cream"
-                />
-                {searchQuery && (
-                  <div className="absolute top-full left-0 right-0 mt-4 max-h-[250px] overflow-y-auto bg-[#222] border border-cream/10 rounded-lg custom-scrollbar shadow-2xl">
-                    {filteredProjects.length > 0 ? (
-                      filteredProjects.map((p) => (
-                        <button
-                          key={p.id}
-                          onClick={() => handleSearchSelect(p.title)}
-                          className="w-full text-center px-4 py-3 hover:bg-cream/10 transition-colors border-b border-cream/5 last:border-0"
-                        >
-                          <p className="font-serif text-cream text-sm">{p.title}</p>
-                          <p className="font-sans text-[9px] uppercase tracking-wider text-warm-gold mt-1">{p.category}</p>
-                        </button>
-                      ))
-                    ) : (
-                      <div className="px-4 py-4 text-center">
-                        <p className="font-sans text-xs text-cream/50">No projects found.</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </motion.div>
 
             {/* Nav Items */}
             <nav className="flex flex-col items-center gap-8 relative z-[60]">

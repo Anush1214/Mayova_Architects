@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import gsap from 'gsap';
@@ -69,8 +69,11 @@ interface HeroLogoProps {
 }
 
 export default function HeroLogo({ onReady }: HeroLogoProps) {
+  // Use useLayoutEffect on client, useEffect on server to avoid Next.js warnings
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
   const [ready, setReady] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true); // Default to true or false, doesn't matter much before mount
   const containerRef = useRef<HTMLDivElement>(null);
   const shapeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const textRef = useRef<HTMLDivElement>(null);
@@ -82,19 +85,19 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
     onReadyRef.current = onReady;
   }, [onReady]);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    requestAnimationFrame(() => setReady(true));
+    setReady(true);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Assembly animation — letters scatter in from random positions to form the grid
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!ready) return;
 
-    const timer = setTimeout(() => {
+    let ctx = gsap.context(() => {
       const shapes = shapeRefs.current.filter(Boolean) as HTMLDivElement[];
       const textEl = textRef.current;
       const servicesEl = servicesRef.current;
@@ -102,7 +105,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
 
       const SCATTERED = getScattered(isMobile);
 
-      // Set scattered starting positions
+      // Set scattered starting positions IMMEDIATELY before paint
       shapes.forEach((el, i) => {
         gsap.set(el, {
           x: SCATTERED[i].x,
@@ -113,20 +116,18 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
         });
       });
 
-      // Hide text + services initially
       if (textEl) gsap.set(textEl, { opacity: 0, y: 25 });
       if (servicesEl) gsap.set(servicesEl, { opacity: 0, y: 15 });
 
       // Assembly timeline
       const tl = gsap.timeline({
-        delay: 0.3,
+        delay: 0.1, // Minimal delay for LCP optimization
         onComplete: () => {
           assemblyDone.current = true;
           onReadyRef.current();
         },
       });
 
-      // Fade all letters in simultaneously
       tl.to(shapes, {
         opacity: 1,
         duration: 0.6,
@@ -134,16 +135,14 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
         ease: 'power2.out',
       }, 0);
 
-      // Fly each letter to its grid position
       shapes.forEach((el, i) => {
         tl.to(el, {
           x: 0, y: 0, rotation: 0, scale: 1,
-          duration: 2.0,
+          duration: 1.8,
           ease: 'power3.inOut',
-        }, 0.15 + i * 0.12);
+        }, 0.1 + i * 0.12);
       });
 
-      // After assembly, fade in company name + tagline
       if (textEl) {
         tl.to(textEl, {
           opacity: 1, y: 0,
@@ -152,7 +151,6 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
         }, '-=0.6');
       }
 
-      // Fade in service links
       if (servicesEl) {
         tl.to(servicesEl, {
           opacity: 1, y: 0,
@@ -160,13 +158,13 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
           ease: 'power2.out',
         }, '-=0.4');
       }
-    }, 50);
+    });
 
-    return () => clearTimeout(timer);
+    return () => ctx.revert();
   }, [ready, isMobile]);
 
   // Scroll scatter — letters fly away as user scrolls down
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!ready) return;
 
     let ctx: gsap.Context | null = null;
@@ -237,7 +235,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
           <div
             key={letter.id}
             ref={(el) => { shapeRefs.current[i] = el; }}
-            className="absolute will-change-transform"
+            className="absolute will-change-transform opacity-0"
             style={{
               left: GRID[i].col * (cell + gap),
               top: GRID[i].row * (cell + gap),
