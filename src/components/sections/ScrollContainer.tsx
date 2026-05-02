@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { projects, Project } from '@/data/projects';
+import { Project } from '@/data/projects';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -137,7 +137,7 @@ function ProjectSection({ project, projectIndex, isRTL, showScrollHint }: {
 }
 
 // ── Main ScrollContainer ──────────────────────────────────────────────────────
-const ScrollContainer = forwardRef<HTMLDivElement>((_, ref) => {
+const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ projects }, ref) => {
   return (
     <div ref={ref} className="relative z-20">
       {/* One pinned section per project, alternating LTR / RTL */}

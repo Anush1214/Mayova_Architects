@@ -215,7 +215,7 @@ body {
 }
 
 @media (pointer: fine) {
-  * {
+  body:not(.studio-mode) * {
     cursor: none !important;
   }
 }

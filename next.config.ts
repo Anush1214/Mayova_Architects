@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/webp', 'image/avif'],
     qualities: [75, 80, 85, 90, 95],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+      },
+    ],
   },
 
   // Enable Turbopack (Next.js 16 default)

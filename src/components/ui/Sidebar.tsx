@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
-import { projects } from '@/data/projects';
+import { Project, getProjects } from '@/data/projects';
 
 const navItems = [
   { num: '01', label: 'Projects', href: '/projects' },
@@ -20,7 +20,8 @@ const serviceLinks = [
   { label: 'Architecture', href: '/projects/architecture' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ projects: initialProjects }: { projects?: Project[] }) {
+  const [allProjects, setAllProjects] = useState<Project[]>(initialProjects || []);
   const [hovered, setHovered] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchMobileOpen, setSearchMobileOpen] = useState(false);
@@ -29,7 +30,13 @@ export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const filteredProjects = projects.filter(p => 
+  useEffect(() => {
+    if (!initialProjects) {
+      getProjects().then(setAllProjects);
+    }
+  }, [initialProjects]);
+
+  const filteredProjects = allProjects.filter(p => 
     p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -77,6 +84,8 @@ export default function Sidebar() {
     }
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
+
+  if (pathname.startsWith('/studio')) return null;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {

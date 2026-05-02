@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function CustomCursor() {
+  const pathname = usePathname();
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -55,6 +57,17 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [isVisible]);
+
+  useEffect(() => {
+    if (pathname.startsWith('/studio')) {
+      document.body.classList.add('studio-mode');
+    } else {
+      document.body.classList.remove('studio-mode');
+    }
+    return () => document.body.classList.remove('studio-mode');
+  }, [pathname]);
+
+  if (pathname.startsWith('/studio')) return null;
 
   if (!isVisible) return null;
 

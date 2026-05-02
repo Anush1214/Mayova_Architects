@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Projects from './Projects';
+import { getProjects } from '@/data/projects';
 
 export const metadata: Metadata = {
   title: 'Projects — MAYOVA Architects',
@@ -7,6 +8,9 @@ export const metadata: Metadata = {
     'Explore the portfolio of MAYOVA Architects. Browse our work across architecture, interior design, urban planning, and landscape design.',
 };
 
-export default function ProjectsPage() {
-  return <Projects />;
+export const revalidate = 60;
+
+export default async function ProjectsPage() {
+  const projects = await getProjects();
+  return <Projects projects={projects} />;
 }

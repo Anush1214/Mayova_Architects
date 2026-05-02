@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { projects } from '@/data/projects';
+import { Project, getProjects } from '@/data/projects';
 
 const navLinks = [
   { label: 'Projects', href: '/projects' },
@@ -15,12 +15,17 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  const filteredProjects = projects.filter(p => 
+  useEffect(() => {
+    getProjects().then(setAllProjects);
+  }, []);
+
+  const filteredProjects = allProjects.filter(p => 
     p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -66,6 +71,8 @@ export default function Navbar() {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (pathname.startsWith('/studio')) return null;
 
   const textColorClass = isDarkBg ? 'text-cream' : 'text-charcoal';
   const textHoverClass = isDarkBg ? 'group-hover:text-white hover:text-white' : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';
