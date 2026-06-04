@@ -198,9 +198,9 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="font-serif text-3xl lg:text-5xl text-charcoal leading-tight mb-10"
             >
-              We design for{' '}
-              <span className="italic text-stone-dark">the long now</span> —
-              architecture that grows more meaningful with time.
+              Every space{' '}
+              <span className="italic text-stone-dark">tells a story</span> —
+              our role is to shape its setting.
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -209,11 +209,10 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="font-sans text-sm text-stone-dark leading-relaxed"
             >
-              Our approach begins with listening — to the land, to the client, and
-              to the story waiting to be told. We believe that the best architecture
-              is born from restraint, not excess. Each project is an exercise in
-              precision: finding the essential gesture that transforms a site,
-              elevates a program, and creates lasting emotional resonance.
+              We approach each project with curiosity, care, and a commitment to meaningful
+              design. By understanding the unique aspirations of our clients and the character 
+              of each site, we create architecture that feels timeless, purposeful, and deeply 
+              connected to its users.
             </motion.p>
           </div>
         </div>
