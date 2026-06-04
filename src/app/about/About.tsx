@@ -143,9 +143,25 @@ export default function About() {
                       href={member.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block font-sans text-sm text-stone-dark hover:text-warm-gold underline decoration-warm-gold/30 hover:decoration-warm-gold transition-colors duration-300"
+                      className="inline-block text-stone-dark hover:text-warm-gold transition-all duration-300 hover:scale-110"
+                      aria-label={`${member.name} LinkedIn Profile`}
                     >
-                      Connect on LinkedIn
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5"
+                      >
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                        <rect width="4" height="12" x="2" y="9" />
+                        <circle cx="4" cy="4" r="2" />
+                      </svg>
                     </a>
                   )}
                 </motion.div>

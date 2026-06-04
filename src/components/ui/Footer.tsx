@@ -130,22 +130,56 @@ export default function Footer() {
                 </ExpandableSection>
 
                 <ExpandableSection title="Socials">
-                  <a
-                    href="https://www.instagram.com/mayova_architects"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
-                  >
-                    Instagram — @mayova_architects
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/company/mayova-architects/?originalSubdomain=in"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500 mt-2"
-                  >
-                    LinkedIn — Mayova Architects
-                  </a>
+                  <div className="flex items-center gap-5 pt-2">
+                    <a
+                      href="https://www.instagram.com/mayova_architects"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-cream/80 hover:text-warm-gold hover:scale-110 transition-all duration-300"
+                      aria-label="Instagram Profile"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                      </svg>
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/company/mayova-architects/?originalSubdomain=in"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-cream/80 hover:text-warm-gold hover:scale-110 transition-all duration-300"
+                      aria-label="LinkedIn Profile"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5"
+                      >
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                        <rect width="4" height="12" x="2" y="9" />
+                        <circle cx="4" cy="4" r="2" />
+                      </svg>
+                    </a>
+                  </div>
                 </ExpandableSection>
 
                 <ExpandableSection title="Office">

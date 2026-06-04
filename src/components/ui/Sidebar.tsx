@@ -9,9 +9,8 @@ import { Project, getProjects } from '@/data/projects';
 
 const navItems = [
   { num: '01', label: 'Projects', href: '/projects' },
-  { num: '02', label: 'News', href: '/news' },
-  { num: '03', label: 'About', href: '/about' },
-  { num: '04', label: 'Contact', href: '#contact' },
+  { num: '02', label: 'About', href: '/about' },
+  { num: '03', label: 'Contact', href: '#contact' },
 ];
 
 const serviceLinks = [

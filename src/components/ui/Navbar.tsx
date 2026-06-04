@@ -9,7 +9,6 @@ import { Project, getProjects } from '@/data/projects';
 
 const navLinks = [
   { label: 'Projects', href: '/projects' },
-  { label: 'News', href: '/news' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '#contact' },
 ];
