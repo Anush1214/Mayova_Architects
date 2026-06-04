@@ -85,6 +85,36 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
     };
   }, [handleScroll]);
 
+  // Close mobile search on click outside or Escape key
+  const searchMobileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!searchMobileOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchMobileRef.current && !searchMobileRef.current.contains(e.target as Node)) {
+        setSearchMobileOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSearchMobileOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside as unknown as EventListener);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside as unknown as EventListener);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [searchMobileOpen]);
+
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileOpen) {
@@ -228,7 +258,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
       </motion.aside>
 
       {/* ==================== MOBILE QUICK SEARCH ==================== */}
-      <div className="fixed top-6 right-[4.5rem] z-[65] lg:hidden pointer-events-none flex flex-col items-end">
+      <div ref={searchMobileRef} className="fixed top-6 right-[4.5rem] z-[65] lg:hidden pointer-events-none flex flex-col items-end">
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

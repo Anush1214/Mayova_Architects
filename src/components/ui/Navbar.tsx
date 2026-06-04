@@ -23,6 +23,34 @@ export default function Navbar() {
   const pathname = usePathname();
   const rafId = useRef<number>(0);
   const isDarkRef = useRef(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // Close search on click outside or Escape key
+  useEffect(() => {
+    if (!isSearchOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsSearchOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    // Use mousedown so it fires before any blur/focus changes
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isSearchOpen]);
 
   // Lazy-load projects only when search is opened (not on mount)
   useEffect(() => {
@@ -119,7 +147,7 @@ export default function Navbar() {
       {/* Right: Navigation Links (Desktop Only) */}
       <nav className="pointer-events-auto hidden lg:flex items-center gap-8 relative">
         {/* Quick Search */}
-        <div className="relative">
+        <div className="relative" ref={searchRef}>
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
