@@ -205,20 +205,35 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     backgroundColor: isHovered ? 'rgba(44,44,44,0.16)' : 'rgba(44,44,44,0)',
                   }}
                 />
-                {/* "View Project" pill */}
+                {/* "View Project" pill — desktop hover */}
                 <motion.div
-                  className="absolute inset-0 flex items-center justify-center"
+                  className="absolute inset-0 hidden md:flex items-center justify-center"
                   initial={false}
                   animate={{ opacity: isHovered ? 1 : 0 }}
                   transition={{ duration: 0.35, ease: EASE }}
                 >
-                  <div className="px-5 sm:px-6 py-2.5 sm:py-3 bg-cream/90 backdrop-blur-sm rounded-full flex items-center gap-2.5 sm:gap-3 shadow-sm">
-                    <span className="font-sans text-[9px] sm:text-[10px] tracking-ultra-wide uppercase text-charcoal">
+                  <div className="px-6 py-3 bg-cream/90 backdrop-blur-sm rounded-full flex items-center gap-3 shadow-sm">
+                    <span className="font-sans text-[10px] tracking-ultra-wide uppercase text-charcoal">
                       View Project
                     </span>
-                    <span className="text-charcoal text-[10px] sm:text-xs">→</span>
+                    <span className="text-charcoal text-xs">→</span>
                   </div>
                 </motion.div>
+
+                {/* "View Project" badge — mobile only, always visible */}
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between md:hidden pointer-events-none">
+                  <div className="px-3.5 py-2 bg-cream/85 backdrop-blur-sm rounded-full flex items-center gap-2 shadow-md">
+                    <span className="font-sans text-[8px] tracking-ultra-wide uppercase text-charcoal">
+                      View Project
+                    </span>
+                    <span className="text-charcoal text-[9px]">→</span>
+                  </div>
+                  <div className="px-3 py-2 bg-charcoal/60 backdrop-blur-sm rounded-full">
+                    <span className="font-sans text-[8px] tracking-ultra-wide uppercase text-cream/90">
+                      {project.images.length} images
+                    </span>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
