@@ -331,8 +331,10 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                   </div>
                 </div>
 
-                {/* Gallery images — staggered entrance */}
-                {project.images.map((src, ii) => (
+                {/* Gallery images — skip any that match the cover to avoid duplication */}
+                {project.images
+                  .filter((src) => src.split('?')[0] !== project.coverImage.split('?')[0])
+                  .map((src, ii) => (
                   <m.div
                     key={src}
                     className="flex-shrink-0"
