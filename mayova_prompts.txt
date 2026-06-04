@@ -1,0 +1,91 @@
+# MAYOVA ARCHITECTS - PROJECT PROMPTS HISTORY
+
+This document contains all user prompts extracted from past conversations related to the development of the Mayova Architects website.
+
+---
+
+1. its mainly focused for laptop use than mobile phone. also make the letter scatter animation very aesthetic and smooth. user should feel like they have opened a very primium very high budegt website like apple etc
+2. can u create a virtual env and then download the required things ?
+3. did u create a github repo for this project?
+4. if i give u the figma workflow can u work according to that for the rest of the website other than the main page animation and design ? https://www.figma.com/board/yTR9GezWuHWc93wK91J8sn/Mayova?node-id=2-673&t=JJkwuhISztRbYanf-1
+5. I want the MAYOVA logo to have scattered characters all over the page and then when we open the website it should all come together into the center to form MAYOVA. I want this animation to b seamless and elegantly premium
+6. please follow the figma workflow and once done please check on the main page
+7. there is no logo animation and also the header part is messed up
+8. i can oly see the scatter of the logo where is it assembling into the actual name ?
+9. its till not working please check again
+10. its still not perfecrt
+11. why is it that when i refresh it stops working
+12. Can u give the entire tech stack of this project
+13. can u create a document of the entire project of how things are done and all the tools that are used
+14. can u convert it or give a txt file instead ?
+15. https://luxury-frame-1.preview.emergentagent.com/ can you make the website exactly same as this one
+16. please continue now i have the real logo of the company which i will share once the website landing page is setteled
+17. changes : for some reason it loads twice and there are few sections which is present behind the 3d logo which needs to b fixed. once that is done there is M at the top left near side bar fix that as well. and also when the one by one the characters go while scorlling make sure there a project image along with it that is shown one after the other when i scroll down , in the current one the images comes once after all the characters are scattered , it should come one after the other. make sure its exactly same as the link that i uploaded earlier https://luxury-frame-1.preview.emergentagent.com/
+18. let the quote come below the logo and i have added the original logo image so please change from the MOYOVA Text to this logo by extracting each element from this logo , also let the scatter speed of each character be a bit slower
+19. make sure all the characters are same as that given in the image . i need it to b exact its jus a combination of few geometric shapes
+20. i have added each character of the logo so that it will b easy for u too replicarte on the website so make the animation exactly same as that of the iamges uploaded , i have also uploaded the visting card of the company for details so please use that accordingly. the quote of the company is give in the visiting card so make sure the main page looks same as that r i will upload those images as a folder of this project u can access it from there folder name logo images
+21. I wanted to know how can i add the google map location or preview of the office loc on the website? if adding lets add beside the contact details there is an empty space so we can add there
+22. Gowri Arcade, 1st Floor Shiribeedu, Udupi - 576101 Karnataka, India (this is the exact address)
+23. 8PVW+C6 Udupi, Karnataka, India 1st floor, Mayova Architects Gowri Arcade, Bananje, Brahmagiri, Udupi, Karnataka 576101, India. this is the exact location can u make it such that the google map preview shows this location on the website ?
+24. I have added the linked in profiles of the company as well as the of the both founders so please add these as well in the website
+25. also I want to add a quick search option in the home page so that frequent user can search with the project name diectly and do not have to scroll every project always. so please add this as well
+26. once this is done one more change which i want to do is that when i press on the back to top button it goes through every single project fast fast and that doesnt really look good . so can you make it such a way that when we press on the back to top button it should directly normally smoothly in a vertical way scroll back to top instead of goin through every project images again
+27. the quick search option is overlapping other option in the navbar , so do a thing replace the home button the navbar with quick search option on the nav bar
+28. make sure that this is optimized for phone also
+29. please remove the disciplines part in the about page
+30. one change that i would want on the phone is to add the quick search option , jus beside the side menu button ,and remove it from the side menu options , so that it reduces the steps of goin to side menu and then seaching the project
+31. these are the vercel analytics which i got and it need serious improvements so can u work on that ?
+32. please git commit the changes
+33. can u recommit the changes and push it again
+34. also why does it feel like the liquid glass effect on mouse hover is coming from the top left corner always when i hover over any button? please fix that
+35. now there are only 3 projects in this website mentioned and in the future there will be many more coming . so wont it be an hazzle to add it every now and then to code , so is there any alternative that we can add to this so that addition of projects to the wesite becomes much easier ? can we add a database or something where we can keep adding new projects and it keeps getting updated on the websites based on the comapny needs ?
+36. okay can u say how I can go forward with sanity.io?
+37. what will happen to the current projects which are there in the code ? will i have to add it again manually in the sanity io platform or will u merge it automatically ?
+38. i have added the sanity organization id and project id
+39. can u make sure if the migrate-to-sanity file worked or not ?
+40. i cant see the mouse cursor when im on this Go to http://localhost:3000/studio. site
+41. its still not working , i cant see my mouse cursor on the site
+42. can I not add the projects in the sanity website ? (no i meant the sanity.io website ?)
+43. i have hosted on vercel so what should i choose here ?
+44. also in quick search option i cant see any projects so please fix that also
+45. please give me a readme md file which i can put on my github readme section
+46. no mention that it is deployed on github https://mayova-architects.vercel.app/
+47. give a small description of this project in this text to copy paste on my github
+48. also mention that its production ready and for actual business
+49. is it possibel to use liquid glass effect when the mouse cursor moves over the text in the navbar , side menu, top right corner logo and also the back to the top button on the footer. u can go through spline website for liquid glass effect reference or do the exact same as that in the apple ios 26
+50. can u keep an outline for it because the effect is barely visible make it look more glassy , also when i scroll over the back on top button it becomes blur so fix that as well , one more thing u can add is when we hover over the the navbar texts make it such that it zooms out when we hover to give better visibility and readability
+51. it still gets blur so make sure the back on top text is visbile and make the liquid glass effect adapt according to the backgroud
+52. import { Analytics } from "@vercel/analytics/next" please add this
+53. import { SpeedInsights } from "@vercel/speed-insights/next"
+54. git push origin main:main error: RPC failed; HTTP 408 curl 22 The requested URL returned error: 408
+55. i have added the actual project images in the logo images folder in that there is a folder called project photos so use these photos to display on the website and remove the current dummy once and also replace the hero bg image with one of the mayova office image which goes will with the logo on the website .
+56. if possible add all the project in the gallery slot. once the logo animation ends u can give the description of 1st project that is the mayova office then few images of that , once those images are done you can give next project mayb the krop_ai project, then once those image gallery is done give description of next project ie cave and the images realted to that . then continue as it was earlier then also update the images in the projects page
+57. also when i hover on the back to top button it becomes blur and the text isnt visble , so make sure the liquid glass effect adjusts itself based on the background
+58. can u keep the 2nd project image and decription below the 1st project and same for the 3rd project also can u keep alternate scroll , like 1st project we scroll from left to right then the 2nd project below that which starts from right and scrolls to left and the 3rd project below the 2nd image which starts from left and scrolls to right .
+59. why is there a space between the 2nd project decription and images , i feel there are 2 images which isnt loading properly so please fix that . and main thing to fix is the the mouse cursor hover effect is not working like how it used to so please fix that
+60. Also in the about us page add the potraits photo in it . They are our founders ,Ar. Vignesh V Rao and Ar. Akash Shetty.
+61. also the performance of the website is very bad so please try to improve it
+62. make sure the headers of all the side pages are proper its all one upon the other
+63. also fix the side bar or side menu
+64. please remove the white background of the image and use it that way it looks too odd rn and remove the unneccessary text below the logo .
+65. also in the navbar for side menu keep the actual logo instead of the letter M , letter the logo change into the word MAYOVA
+66. also behind the logo add a subtle architectural background which makes it more premium
+67. i have added all the background removed images of the logo as well as the characters , for the main animated logo used the separeate char, for the side bare use the complete single logo image
+68. also fix the footer nothing can be read so please remove what ever that white gradient is
+69. add the tag line CREATED TO CREATE
+70. also why is there no scatter animation now , why was that changed ?
+71. https://www.instagram.com/mayova_architects/ this is the insta handle of the page so please add this as well
+72. now fix the side menu , the texts look very small and not clearly visible so make it more aesthetic and premium to use . also please change the backgorund behind the mayova logo i mean add some nice archtecture image or something of that sort . also once done make this website mobile optimized as well .
+73. can u make the side menu text font color a bit more darker its difficult to read
+74. Make this part more visible, so that the visitors know that this what we offer and add all the things not only three, Architecture,Interior,Landscapping,Product Designing
+75. Remove this and a subtle Navbar similar to the side menu bar, and if we are in any page , if we click on the logo on the top left , it shld take use to the home page and also add an option of home in the navbar at the top
+76. how to add the mayova logo on the tab bar i mean on the tab title ?
+77. im happy with the animation part and rest of the layout i want to revamp how the image section in the main page looks like . Can we make a horizontal image similar to this website https://big.dk/projects/citywave-6592 and also change the mouse cursor design
+78. let the entire image section come after i scroll the logo section . make sure that the logo is not on top of the image section
+79. there is too much space after the animation so make that less also im not able to scroll using my mouse paste the last image to the footer section so please fix that
+80. also if possible make the mouse cursor more accurate to the physical mouse movement also, when the move cursor hovers over the word in the top navbar let it be like it is encircling the word which it hovers above
+81. also when the logo splashes make it more smooth and a bit slower because right now it looks too fast
+82. similar to the navbar animation of the mouse cursor make it same for the mayova logo at the top right corner and also for the words in the side menu bar
+83. one more change is that when i go to the footer section the navbar and the side menu and logo cant be read properly because the font color merges with the background of footer so make the font more visbile
+84. let the mayova logo be the same red dont make it cyan
+85. now the words cannot be seen on the normal main page at the top can u do something like when in the main page the logo should be brown and when we scroll down to footer it shld change to beige ?

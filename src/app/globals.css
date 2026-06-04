@@ -214,6 +214,16 @@ body {
   width: 100%;
 }
 
+/* ===== Scrollbar Hide (for horizontal gallery) ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @media (pointer: fine) {
   body:not(.studio-mode) * {
     cursor: none !important;

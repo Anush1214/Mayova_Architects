@@ -1,35 +1,38 @@
 'use client';
 
-import { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
+import { forwardRef, useState, useCallback, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Project } from '@/data/projects';
 
-gsap.registerPlugin(ScrollTrigger);
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Shared easing curve — architectural, refined
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const EASE = [0.22, 1, 0.36, 1] as const; // expo-out — ultra smooth
 
-// ── Description Card ──────────────────────────────────────────────────────────
-function DescCard({ project, index, align }: { project: Project; index: number; align: 'left' | 'right' }) {
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Description Card (left panel in the expanded strip)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function DescCard({ project, index }: { project: Project; index: number }) {
   return (
-    <div className={`relative flex-shrink-0 w-[85vw] md:w-[360px] h-[70vh] lg:h-[75vh] flex flex-col justify-between px-6 md:px-10 py-10 md:py-12 bg-cream/90 backdrop-blur-sm ${align === 'left' ? 'border-r' : 'border-l'} border-stone/15`}>
+    <div className="relative flex-shrink-0 w-[82vw] sm:w-[75vw] md:w-[340px] h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] flex flex-col justify-between px-5 sm:px-6 md:px-10 py-8 sm:py-10 md:py-12 bg-cream/90 backdrop-blur-sm border-r border-stone/15">
       <div>
-        <p className="font-sans text-[9px] tracking-mega-wide uppercase text-stone mb-8">
+        <p className="font-sans text-[8px] sm:text-[9px] tracking-mega-wide uppercase text-stone mb-5 sm:mb-8">
           {String(index + 1).padStart(2, '0')} — {project.category} · {project.year}
         </p>
-        <h2 className="font-serif text-5xl md:text-6xl text-charcoal leading-[1.05] mb-5">
+        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal leading-[1.05] mb-4 sm:mb-5">
           {project.title}
         </h2>
-        <p className="font-sans text-[11px] tracking-ultra-wide uppercase text-warm-gold mb-5">
+        <p className="font-sans text-[10px] sm:text-[11px] tracking-ultra-wide uppercase text-warm-gold mb-4 sm:mb-5">
           {project.subtitle}
         </p>
-        <p className="font-sans text-sm text-stone-dark leading-relaxed max-w-[260px]">
+        <p className="font-sans text-xs sm:text-sm text-stone-dark leading-relaxed max-w-[260px]">
           {project.description}
         </p>
       </div>
       <div>
-        <div className="w-8 h-px bg-warm-gold mb-5" />
-        <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone">
+        <div className="w-8 h-px bg-warm-gold mb-4 sm:mb-5" />
+        <p className="font-sans text-[9px] sm:text-[10px] tracking-ultra-wide uppercase text-stone">
           {project.location}
         </p>
       </div>
@@ -37,162 +40,403 @@ function DescCard({ project, index, align }: { project: Project; index: number; 
   );
 }
 
-// ── Image Panel ───────────────────────────────────────────────────────────────
-function ImgPanel({ src, alt, priority, wide }: { src: string; alt: string; priority?: boolean; wide?: boolean }) {
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Image Panel (each image in the expanded strip)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function ImgPanel({ src, alt, wide }: { src: string; alt: string; wide?: boolean }) {
   return (
-    <div className={`relative flex-shrink-0 ${wide ? 'w-[85vw] md:w-[58vw] lg:w-[52vw]' : 'w-[80vw] md:w-[48vw] lg:w-[40vw]'} h-[70vh] lg:h-[75vh] overflow-hidden group interactive`}>
-      <Image src={src} alt={alt} fill className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]" priority={priority} quality={75} sizes="(max-width: 768px) 90vw, 60vw" />
-      <div className="absolute inset-0 bg-charcoal/25 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+    <div className={`relative flex-shrink-0 ${
+      wide
+        ? 'w-[82vw] sm:w-[75vw] md:w-[58vw] lg:w-[52vw]'
+        : 'w-[78vw] sm:w-[70vw] md:w-[48vw] lg:w-[40vw]'
+    } h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden group interactive`}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]"
+        quality={75}
+        loading="lazy"
+        sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 60vw"
+      />
+      <div className="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
     </div>
   );
 }
 
-// ── Single Project Section (pinned horizontal scroll) ─────────────────────────
-function ProjectSection({ project, projectIndex, isRTL, showScrollHint }: {
-  project: Project; projectIndex: number; isRTL: boolean; showScrollHint: boolean;
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Project Card — single component that morphs between collapsed / expanded
+   Uses a unified container instead of swapping components for smooth animation
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function ProjectCard({ project, index, isExpanded, onToggle }: {
+  project: Project; index: number; isExpanded: boolean; onToggle: () => void;
 }) {
-  const pinnedRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
 
-  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+  // ── Scroll tracking for arrows ──
+  useEffect(() => {
+    if (!isExpanded) {
+      setShowLeftArrow(false);
+      setShowRightArrow(false);
+      return;
+    }
+    const el = scrollRef.current;
+    if (!el) return;
 
-  useIsomorphicLayoutEffect(() => {
-    const pinned = pinnedRef.current;
-    const wrapper = wrapperRef.current;
-    if (!pinned || !wrapper) return;
+    const handleScroll = () => {
+      setShowLeftArrow(el.scrollLeft > 30);
+      setShowRightArrow(el.scrollLeft < el.scrollWidth - el.clientWidth - 30);
+    };
 
-    const ctx = gsap.context(() => {
-      const getMax = () => wrapper.scrollWidth - window.innerWidth * 0.95;
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    // Re-check after images start loading
+    const t = setTimeout(handleScroll, 200);
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+      clearTimeout(t);
+    };
+  }, [isExpanded]);
 
-      const tween = isRTL
-        ? gsap.fromTo(wrapper, { x: () => -getMax() }, { x: 0, ease: 'none' })
-        : gsap.to(wrapper, { x: () => -getMax(), ease: 'none' });
-
-      ScrollTrigger.create({
-        trigger: pinned,
-        start: 'top top',
-        end: () => `+=${wrapper.scrollWidth}`,
-        pin: true,
-        pinSpacing: true,
-        animation: tween,
-        scrub: 1.2,
-        invalidateOnRefresh: true,
-      });
-    });
-
-    return () => ctx.revert();
-  }, [isRTL]);
-
-  // RTL: images reversed, desc card on the right end
-  const images = isRTL ? [...project.images].reverse() : project.images;
+  const scrollBy = (dir: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = Math.min(window.innerWidth * 0.45, 600);
+    el.scrollBy({ left: dir === 'right' ? amount : -amount, behavior: 'smooth' });
+  };
 
   return (
-    <>
-      {/* Anchor for scrolling */}
-      <div id={`project-anchor-${project.title.replace(/\s+/g, '-').toLowerCase()}`} className="absolute" style={{ transform: 'translateY(-100px)' }}></div>
-      <div id={`project-${project.id}`} ref={pinnedRef} className="relative w-full h-screen overflow-hidden bg-cream">
-      {/* Scroll hint — only on first section */}
-      {showScrollHint && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-20 pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 4.5, duration: 1.5 }}
-            className="flex flex-col items-center gap-3"
-          >
-            <span className="font-sans text-[9px] tracking-mega-wide uppercase text-stone">Scroll</span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-px h-8 bg-gradient-to-b from-stone/60 to-transparent"
-            />
-          </motion.div>
+    <div
+      id={`project-${project.id}`}
+      className="relative bg-cream"
+    >
+      {/* Anchor for sidebar navigation */}
+      <div
+        id={`project-anchor-${project.title.replace(/\s+/g, '-').toLowerCase()}`}
+        className="absolute"
+        style={{ transform: 'translateY(-100px)' }}
+      />
+
+      {/* Divider */}
+      {index > 0 && (
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="h-px bg-gradient-to-r from-transparent via-stone/15 to-transparent" />
         </div>
       )}
 
-      {/* Horizontal strip */}
-      <div
-        ref={wrapperRef}
-        className="absolute top-0 left-0 h-full flex items-center pt-24 pb-12 px-6 md:px-12 lg:px-20 gap-5 md:gap-8 will-change-transform z-[5]"
+      {/* Project Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.8, delay: 0.05, ease: EASE }}
+        className="py-6 sm:py-8 lg:py-12"
       >
-        {isRTL ? (
-          <>
-            {images.map((src, ii) => (
-              <ImgPanel key={src} src={src} alt={`${project.title} ${ii + 1}`} wide={ii === 0} />
-            ))}
-            <DescCard project={project} index={projectIndex} align="right" />
-          </>
-        ) : (
-          <>
-            <DescCard project={project} index={projectIndex} align="left" />
-            {images.map((src, ii) => (
-              <ImgPanel key={src} src={src} alt={`${project.title} ${ii + 1}`} priority={projectIndex === 0 && ii === 0} wide={ii === 0} />
-            ))}
-          </>
-        )}
-      </div>
+        {/* Project number + image count */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
+            <p className="font-sans text-[8px] sm:text-[9px] tracking-mega-wide uppercase text-stone/50">
+              {String(index + 1).padStart(2, '0')}
+            </p>
+            <p className="font-sans text-[8px] sm:text-[9px] tracking-ultra-wide uppercase text-stone/40">
+              {project.images.length} images
+            </p>
+          </div>
+        </div>
+
+        {/* ══════════ IMAGE AREA — morphs in-place ══════════ */}
+        <motion.div
+          layout
+          transition={{ layout: { duration: 0.65, ease: EASE } }}
+          className={isExpanded ? 'relative' : 'max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12'}
+        >
+          {/* ── COLLAPSED: single cover image ── */}
+          {!isExpanded && (
+            <motion.div
+              layout
+              layoutId={`cover-${project.id}`}
+              onClick={onToggle}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className="relative overflow-hidden cursor-pointer will-change-transform"
+              style={{
+                borderRadius: isHovered ? '2px' : '0px',
+              }}
+              animate={{
+                scale: isHovered ? 1.012 : 1,
+                y: isHovered ? -5 : 0,
+              }}
+              transition={{
+                scale: { duration: 0.5, ease: EASE },
+                y: { duration: 0.5, ease: EASE },
+                layout: { duration: 0.65, ease: EASE },
+              }}
+            >
+              {/* Shadow layer (separate for GPU performance) */}
+              <div
+                className="absolute inset-0 rounded-[2px] pointer-events-none"
+                style={{
+                  boxShadow: isHovered
+                    ? '0 20px 50px -10px rgba(0,0,0,0.14), 0 6px 16px -6px rgba(0,0,0,0.08)'
+                    : '0 0 0 0 transparent',
+                  transition: 'box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              />
+              <div className="relative h-[42vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh]">
+                <Image
+                  src={project.coverImage}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  style={{
+                    transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                    transition: 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
+                  }}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  quality={80}
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1400px"
+                />
+                {/* Dark overlay on hover */}
+                <div
+                  className="absolute inset-0 transition-all duration-700"
+                  style={{
+                    backgroundColor: isHovered ? 'rgba(44,44,44,0.16)' : 'rgba(44,44,44,0)',
+                  }}
+                />
+                {/* "View Project" pill */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center"
+                  initial={false}
+                  animate={{ opacity: isHovered ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                >
+                  <div className="px-5 sm:px-6 py-2.5 sm:py-3 bg-cream/90 backdrop-blur-sm rounded-full flex items-center gap-2.5 sm:gap-3 shadow-sm">
+                    <span className="font-sans text-[9px] sm:text-[10px] tracking-ultra-wide uppercase text-charcoal">
+                      View Project
+                    </span>
+                    <span className="text-charcoal text-[10px] sm:text-xs">→</span>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── EXPANDED: horizontal scroll strip ── */}
+          {isExpanded && (
+            <motion.div
+              layout
+              layoutId={`cover-${project.id}`}
+              className="relative w-full"
+              transition={{ layout: { duration: 0.65, ease: EASE } }}
+            >
+              {/* Left arrow */}
+              <AnimatePresence>
+                {showLeftArrow && (
+                  <motion.button
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ duration: 0.25 }}
+                    onClick={() => scrollBy('left')}
+                    className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-cream/85 backdrop-blur-sm border border-stone/10 hover:border-warm-gold/40 active:scale-95 transition-all duration-200 cursor-pointer shadow-lg"
+                    aria-label="Scroll left"
+                  >
+                    <span className="text-charcoal text-sm sm:text-base">←</span>
+                  </motion.button>
+                )}
+              </AnimatePresence>
+
+              {/* Right arrow */}
+              <AnimatePresence>
+                {showRightArrow && (
+                  <motion.button
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.25 }}
+                    onClick={() => scrollBy('right')}
+                    className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-cream/85 backdrop-blur-sm border border-stone/10 hover:border-warm-gold/40 active:scale-95 transition-all duration-200 cursor-pointer shadow-lg"
+                    aria-label="Scroll right"
+                  >
+                    <span className="text-charcoal text-sm sm:text-base">→</span>
+                  </motion.button>
+                )}
+              </AnimatePresence>
+
+              {/* Close button */}
+              <motion.button
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.25, duration: 0.35, ease: EASE }}
+                onClick={onToggle}
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-cream/85 backdrop-blur-sm border border-stone/10 hover:border-warm-gold/40 active:scale-90 transition-all duration-200 cursor-pointer shadow-lg group"
+                aria-label="Collapse gallery"
+              >
+                <span className="text-charcoal group-hover:text-warm-gold transition-colors text-xs sm:text-sm">✕</span>
+              </motion.button>
+
+              {/* Horizontal scrollable strip */}
+              <div
+                ref={scrollRef}
+                className="flex items-stretch gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide overscroll-x-contain"
+                style={{
+                  scrollSnapType: 'x mandatory',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                {/* Desc card */}
+                <motion.div
+                  className="flex-shrink-0"
+                  style={{ scrollSnapAlign: 'start' }}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
+                >
+                  <DescCard project={project} index={index} />
+                </motion.div>
+
+                {/* Cover image as first panel */}
+                <div
+                  className="flex-shrink-0"
+                  style={{ scrollSnapAlign: 'start' }}
+                >
+                  <div className="relative w-[82vw] sm:w-[75vw] md:w-[58vw] lg:w-[52vw] h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden group interactive">
+                    <Image
+                      src={project.coverImage}
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]"
+                      quality={80}
+                      sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 60vw"
+                    />
+                    <div className="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  </div>
+                </div>
+
+                {/* Gallery images — staggered entrance */}
+                {project.images.map((src, ii) => (
+                  <motion.div
+                    key={src}
+                    className="flex-shrink-0"
+                    style={{ scrollSnapAlign: 'start' }}
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      delay: 0.15 + ii * 0.06,
+                      duration: 0.5,
+                      ease: EASE,
+                    }}
+                  >
+                    <ImgPanel src={src} alt={`${project.title} ${ii + 1}`} wide={ii === 0} />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+
+        {/* Title + Meta — always below the image area */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
+            <div>
+              <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+                <span className="font-sans text-[8px] sm:text-[9px] tracking-ultra-wide uppercase text-warm-gold">
+                  {project.category}
+                </span>
+                <span className="text-stone/30 text-[8px]">&middot;</span>
+                <span className="font-sans text-[8px] sm:text-[9px] tracking-ultra-wide uppercase text-stone">
+                  {project.year}
+                </span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-charcoal leading-tight">
+                {project.title}
+              </h2>
+              <p className="font-sans text-[9px] sm:text-[10px] tracking-ultra-wide uppercase text-stone/60 mt-1">
+                {project.subtitle}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="w-5 sm:w-6 h-px bg-warm-gold" />
+              <span className="font-sans text-[9px] sm:text-[10px] tracking-ultra-wide uppercase text-stone">
+                {project.location}
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
-    </>
   );
 }
 
-// ── Main ScrollContainer ──────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Main ScrollContainer
+   ═══════════════════════════════════════════════════════════════════════════════ */
 const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ projects }, ref) => {
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const handleToggle = useCallback((id: number) => {
+    setExpandedId(prev => prev === id ? null : id);
+  }, []);
+
   return (
-    <div ref={ref} className="relative z-20">
-      {/* One pinned section per project, alternating LTR / RTL */}
-      {projects.map((project, i) => (
-        <ProjectSection
-          key={project.id}
-          project={project}
-          projectIndex={i}
-          isRTL={i % 2 === 1}
-          showScrollHint={i === 0}
-        />
-      ))}
+    <LayoutGroup>
+      <div ref={ref} className="relative z-20">
+        {projects.map((project, i) => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            index={i}
+            isExpanded={expandedId === project.id}
+            onToggle={() => handleToggle(project.id)}
+          />
+        ))}
 
-      {/* ── Vision / About ─────────────────────────────────────────────────── */}
-      <section id="about" className="py-32 lg:py-40 bg-cream">
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              <h2 className="font-serif text-4xl lg:text-6xl text-charcoal leading-tight">
-                A house is a<br />
-                <span className="italic text-stone-dark">slow ritual</span><br />
-                of inhabiting time.
-              </h2>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="flex flex-col justify-center"
-            >
-              <p className="font-sans text-sm text-stone-dark leading-relaxed max-w-lg mb-10">
-                We design for the long arc — for the way a stone wall darkens after rain, for the way
-                a child finds their corner of a room. Our practice spans interior, planning, landscape
-                and architecture, but the work is always the same: to make space for the quiet things.
-              </p>
-              <button
-                className="nav-link font-sans text-[11px] tracking-ultra-wide uppercase text-charcoal hover:text-warm-gold transition-colors duration-500 inline-flex items-center gap-3 group cursor-pointer w-fit"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        {/* ── Vision / About ─────────────────────────────────────────────── */}
+        <section id="about" className="py-20 sm:py-32 lg:py-40 bg-cream">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 1, ease: EASE }}
               >
-                Explore Projects
-                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-              </button>
-            </motion.div>
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-charcoal leading-tight">
+                  A house is a<br />
+                  <span className="italic text-stone-dark">slow ritual</span><br />
+                  of inhabiting time.
+                </h2>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 1, delay: 0.2, ease: EASE }}
+                className="flex flex-col justify-center"
+              >
+                <p className="font-sans text-xs sm:text-sm text-stone-dark leading-relaxed max-w-lg mb-8 sm:mb-10">
+                  We design for the long arc — for the way a stone wall darkens after rain, for the way
+                  a child finds their corner of a room. Our practice spans interior, planning, landscape
+                  and architecture, but the work is always the same: to make space for the quiet things.
+                </p>
+                <button
+                  className="nav-link font-sans text-[10px] sm:text-[11px] tracking-ultra-wide uppercase text-charcoal hover:text-warm-gold transition-colors duration-500 inline-flex items-center gap-3 group cursor-pointer w-fit"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  Explore Projects
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </button>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div className="h-16" />
-    </div>
+        <div className="h-12 sm:h-16" />
+      </div>
+    </LayoutGroup>
   );
 });
 
