@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 interface LoadingScreenProps {
   isLoading: boolean;
@@ -8,9 +8,10 @@ interface LoadingScreenProps {
 
 export default function LoadingScreen({ isLoading }: LoadingScreenProps) {
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isLoading && (
-        <motion.div
+        <m.div
           key="loading"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -18,16 +19,18 @@ export default function LoadingScreen({ isLoading }: LoadingScreenProps) {
           className="fixed inset-0 z-[100] flex flex-col items-center justify-end pb-16 bg-transparent pointer-events-none"
         >
           {/* Subtle bottom tagline that fades away */}
-          <motion.p
+          <m.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 0.5, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className="font-sans text-[9px] tracking-mega-wide uppercase text-stone"
           >
             MAYOVA Architects
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 }
+

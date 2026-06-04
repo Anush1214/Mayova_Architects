@@ -36,9 +36,10 @@ export default function HomeClient({ projects }: HomeClientProps) {
           alt=""
           fill
           className="object-cover opacity-20"
-          loading="lazy"
-          quality={50}
+          priority
+          quality={40}
           sizes="100vw"
+          fetchPriority="high"
         />
         {/* Gradient overlay to soften edges */}
         <div

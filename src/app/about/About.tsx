@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
 import Sidebar from '@/components/ui/Sidebar';
@@ -23,7 +23,7 @@ export default function About() {
       <section className="py-16 lg:py-24">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -48,8 +48,8 @@ export default function About() {
                 curiosity, creativity, and attention to detail. We believe great design is not only seen—it is felt 
                 through the experiences it creates and the stories it allows people to live.
               </p>
-            </motion.div>
-            <motion.div
+            </m.div>
+            <m.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -82,7 +82,7 @@ export default function About() {
                   </p>
                 </div> */}
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function About() {
       {/* Team / Founders */}
       <section id="team" className="py-16 lg:py-24 bg-cream-dark">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
@@ -101,11 +101,11 @@ export default function About() {
             <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone">
               Founding Partners
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             {/* Image Side - Single Portrait */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -120,12 +120,12 @@ export default function About() {
                 quality={75}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-            </motion.div>
+            </m.div>
 
             {/* Bios Side */}
             <div className="flex flex-col gap-12 lg:gap-16 lg:pt-12">
               {teamMembers.map((member, i) => (
-                <motion.div
+                <m.div
                   key={member.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -167,7 +167,7 @@ export default function About() {
                       </svg>
                     </a>
                   )}
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function About() {
       {/* Philosophy */}
       <section className="py-24 lg:py-32">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
@@ -188,10 +188,10 @@ export default function About() {
             <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone">
               Philosophy
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="max-w-3xl">
-            <motion.h2
+            <m.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -201,8 +201,8 @@ export default function About() {
               Every space{' '}
               <span className="italic text-stone-dark">tells a story</span> —
               our role is to shape its setting.
-            </motion.h2>
-            <motion.p
+            </m.h2>
+            <m.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
@@ -213,7 +213,7 @@ export default function About() {
               design. By understanding the unique aspirations of our clients and the character 
               of each site, we create architecture that feels timeless, purposeful, and deeply 
               connected to its users.
-            </motion.p>
+            </m.p>
           </div>
         </div>
       </section>

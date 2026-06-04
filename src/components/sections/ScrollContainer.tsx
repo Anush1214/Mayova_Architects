@@ -217,9 +217,11 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                     transition: 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  quality={70}
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1400px"
+                  loading={index === 0 ? undefined : 'lazy'}
+                  priority={index === 0}
+                  fetchPriority={index === 0 ? 'high' : undefined}
+                  quality={65}
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1200px"
                 />
                 {/* Dark overlay on hover */}
                 <div

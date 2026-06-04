@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Project, getProjects } from '@/data/projects';
@@ -119,7 +119,8 @@ export default function Navbar() {
   const textHoverClass = isDarkBg ? 'group-hover:text-white hover:text-white' : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';
 
   return (
-    <motion.header
+    <LazyMotion features={domAnimation}>
+    <m.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 3 }}
@@ -159,7 +160,7 @@ export default function Navbar() {
           
           <AnimatePresence>
             {isSearchOpen && (
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
@@ -193,7 +194,7 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>
@@ -211,6 +212,7 @@ export default function Navbar() {
           </Link>
         ))}
       </nav>
-    </motion.header>
+    </m.header>
+    </LazyMotion>
   );
 }

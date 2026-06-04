@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { Project, getProjects } from '@/data/projects';
 
@@ -142,9 +142,10 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
   const textMutedClass = isDarkBg ? 'text-cream/60' : 'text-charcoal/60';
 
   return (
+    <LazyMotion features={domAnimation}>
     <>
       {/* ==================== DESKTOP SIDEBAR BACKGROUND ==================== */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
@@ -162,7 +163,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
       />
 
       {/* ==================== DESKTOP SIDEBAR CONTENT ==================== */}
-      <motion.aside
+      <m.aside
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
@@ -203,7 +204,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
 
           {/* Service sub-links */}
           {hovered && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.3 }}
@@ -220,14 +221,14 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
                   </span>
                 </Link>
               ))}
-            </motion.div>
+            </m.div>
           )}
         </nav>
 
         {/* Bottom: Location + Social */}
         <div className="flex flex-col items-center gap-4 px-4">
           {hovered ? (
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex flex-col items-center gap-2"
@@ -245,7 +246,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
               <span className={`font-sans text-[10px] tracking-[0.15em] transition-colors duration-500 ${isDarkBg ? 'text-cream/40' : 'text-stone/40'}`}>
                 Udupi, India
               </span>
-            </motion.div>
+            </m.div>
           ) : (
             <span
               className={`font-sans text-[9px] tracking-[0.3em] uppercase transition-colors duration-500 ${isDarkBg ? 'text-cream/40' : 'text-stone/40'}`}
@@ -255,11 +256,11 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
             </span>
           )}
         </div>
-      </motion.aside>
+      </m.aside>
 
       {/* ==================== MOBILE QUICK SEARCH ==================== */}
       <div ref={searchMobileRef} className="fixed top-6 right-[4.5rem] z-[65] lg:hidden pointer-events-none flex flex-col items-end">
-        <motion.button
+        <m.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 3 }}
@@ -274,11 +275,11 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-        </motion.button>
+        </m.button>
 
         <AnimatePresence>
           {searchMobileOpen && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -312,13 +313,13 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
                   </div>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* ==================== MOBILE HAMBURGER BUTTON ==================== */}
-      <motion.button
+      <m.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3 }}
@@ -329,30 +330,30 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
         className="nav-link fixed top-6 right-6 z-[65] lg:hidden flex flex-col items-center justify-center w-12 h-12 gap-[5px] cursor-pointer rounded-full pointer-events-auto"
         aria-label="Toggle menu"
       >
-        <motion.span
+        <m.span
           animate={{
             rotate: mobileOpen ? 45 : 0,
             y: mobileOpen ? 7 : 0,
           }}
           className={`block w-6 h-[1.5px] origin-center transition-colors duration-500 ${isDarkBg ? 'bg-cream' : 'bg-charcoal'}`}
         />
-        <motion.span
+        <m.span
           animate={{ opacity: mobileOpen ? 0 : 1 }}
           className={`block w-6 h-[1.5px] transition-colors duration-500 ${isDarkBg ? 'bg-cream' : 'bg-charcoal'}`}
         />
-        <motion.span
+        <m.span
           animate={{
             rotate: mobileOpen ? -45 : 0,
             y: mobileOpen ? -7 : 0,
           }}
           className={`block w-6 h-[1.5px] origin-center transition-colors duration-500 ${isDarkBg ? 'bg-cream' : 'bg-charcoal'}`}
         />
-      </motion.button>
+      </m.button>
 
       {/* ==================== MOBILE FULL-SCREEN MENU ==================== */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -376,7 +377,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
             {/* Nav Items */}
             <nav className="flex flex-col items-center gap-8 relative z-[60]">
               {navItems.map((item, i) => (
-                <motion.div
+                <m.div
                   key={item.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -394,12 +395,12 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
                       {item.label}
                     </span>
                   </Link>
-                </motion.div>
+                </m.div>
               ))}
             </nav>
 
             {/* Services */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
@@ -419,10 +420,10 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
                   )}
                 </span>
               ))}
-            </motion.div>
+            </m.div>
 
             {/* Bottom info */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
@@ -439,10 +440,11 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
               <span className="font-sans text-[10px] text-cream/20 tracking-wider">
                 Udupi, Karnataka · India
               </span>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>
+    </LazyMotion>
   );
 }

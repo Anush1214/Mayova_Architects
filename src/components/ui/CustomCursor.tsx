@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
 export default function CustomCursor() {
@@ -87,9 +87,10 @@ export default function CustomCursor() {
   }
 
   return (
+    <LazyMotion features={domAnimation}>
     <>
       {/* ── Glass pill: snap to nav-link, NO blur (text must stay readable) ── */}
-      <motion.div
+      <m.div
         className="fixed top-0 left-0 pointer-events-none z-[9998]"
         style={{
           borderRadius: '9999px',
@@ -116,7 +117,7 @@ export default function CustomCursor() {
       />
 
       {/* ── Dot / hover ring: mix-blend-difference = always readable ── */}
-      <motion.div
+      <m.div
         className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
         style={{
           backgroundColor: isHovering && !hoverTarget ? 'transparent' : 'rgba(255,255,255,1)',
@@ -137,13 +138,14 @@ export default function CustomCursor() {
         }}
       >
         {isHovering && !hoverTarget && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full h-full rounded-full bg-white"
           />
         )}
-      </motion.div>
+      </m.div>
     </>
+    </LazyMotion>
   );
 }

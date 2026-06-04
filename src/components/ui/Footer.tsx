@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 interface ExpandableProps {
   title: string;
@@ -20,15 +20,15 @@ function ExpandableSection({ title, children }: ExpandableProps) {
         <span className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone group-hover:text-cream transition-colors duration-300">
           {title}
         </span>
-        <motion.span
+        <m.span
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.3 }}
           className="text-stone text-lg leading-none"
         >
           +
-        </motion.span>
+        </m.span>
       </button>
-      <motion.div
+      <m.div
         initial={false}
         animate={{
           height: open ? 'auto' : 0,
@@ -40,7 +40,7 @@ function ExpandableSection({ title, children }: ExpandableProps) {
         <div className="pt-4 space-y-1">
           {children}
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -69,7 +69,7 @@ function LazyMap() {
   }, []);
 
   return (
-    <motion.div
+    <m.div
       ref={containerRef}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -97,7 +97,7 @@ function LazyMap() {
           </span>
         </div>
       )}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -116,11 +116,12 @@ export default function Footer() {
   }, []);
 
   return (
+    <LazyMotion features={domAnimation}>
     <>
       {/* Page-level fade overlay */}
       <AnimatePresence>
         {isFading && (
-          <motion.div
+          <m.div
             key="back-to-top-fade"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -141,7 +142,7 @@ export default function Footer() {
           <div className="flex flex-col lg:flex-row justify-between gap-16 lg:gap-24">
             <div className="flex-1 lg:max-w-xl">
               {/* Header */}
-              <motion.h2
+              <m.h2
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
@@ -154,10 +155,10 @@ export default function Footer() {
                 Created
                 <br />
                 To Create.
-              </motion.h2>
+              </m.h2>
 
               {/* Expandable Sections — per workflow: Email +, Socials +, Office + */}
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
@@ -252,7 +253,7 @@ export default function Footer() {
                     +91 77958-90714
                   </p>
                 </ExpandableSection>
-              </motion.div>
+              </m.div>
             </div>
 
             {/* Map Preview — lazy loaded via IntersectionObserver */}
@@ -260,7 +261,7 @@ export default function Footer() {
           </div>
 
           {/* Services bar */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: '-50px' }}
@@ -279,10 +280,10 @@ export default function Footer() {
                 </span>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* BACK TO TOP button — per workflow */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: '-50px' }}
@@ -296,13 +297,13 @@ export default function Footer() {
               <span className="inline-block transition-transform duration-300 group-hover:-translate-y-1">↑</span>
               Back To Top
             </button>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
       {/* Giant MAYOVA Text at Bottom */}
       <div className="relative overflow-hidden pb-8">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
@@ -315,9 +316,10 @@ export default function Footer() {
           <h2 className="font-serif text-[12vw] lg:text-[14vw] text-cream/[0.06] leading-none tracking-wider select-none uppercase">
             MAYOVA
           </h2>
-        </motion.div>
+        </m.div>
       </div>
     </footer>
     </>
+    </LazyMotion>
   );
 }
