@@ -222,12 +222,11 @@ body {
 }
 
 /* ===== Custom Cursor (desktop with fine pointer only) ===== */
-@media (pointer: fine) and (min-width: 768px) {
-  body:not(.studio-mode) a,
-  body:not(.studio-mode) button,
-  body:not(.studio-mode) [role="button"],
-  body:not(.studio-mode) .interactive,
-  body:not(.studio-mode) .nav-link {
-    cursor: none !important;
+@media (pointer: fine) {
+  body:not(.studio-mode) {
+    cursor: none;
+  }
+  body:not(.studio-mode) * {
+    cursor: inherit !important;
   }
 }
