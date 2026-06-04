@@ -13,11 +13,7 @@ const navItems = [
   { num: '03', label: 'Contact', href: '#contact' },
 ];
 
-const serviceLinks = [
-  { label: 'Interior', href: '/projects/interior' },
-  { label: 'Landscape', href: '/projects/landscape' },
-  { label: 'Architecture', href: '/projects/architecture' },
-];
+
 
 export default function Sidebar({ projects: initialProjects }: { projects?: Project[] }) {
   const [allProjects, setAllProjects] = useState<Project[]>(initialProjects || []);
@@ -202,27 +198,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
             </Link>
           ))}
 
-          {/* Service sub-links */}
-          {hovered && (
-            <m.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.3 }}
-              className={`mt-3 pt-3 border-t ${isDarkBg ? 'border-white/10' : 'border-charcoal/5'} flex flex-col gap-2`}
-            >
-              {serviceLinks.map((cat) => (
-                <Link
-                  key={cat.label}
-                  href={cat.href}
-                  className={`nav-link group px-2 py-1 rounded-full font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-300 ml-8 ${isDarkBg ? 'text-cream/50' : 'text-charcoal/50'} ${textHoverClass}`}
-                >
-                  <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
-                    {cat.label}
-                  </span>
-                </Link>
-              ))}
-            </m.div>
-          )}
+
         </nav>
 
         {/* Bottom: Location + Social */}
@@ -399,28 +375,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
               ))}
             </nav>
 
-            {/* Services */}
-            <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              className="mt-12 flex items-center gap-4"
-            >
-              {serviceLinks.map((cat, i) => (
-                <span key={cat.label} className="flex items-center gap-4">
-                  <Link
-                    href={cat.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="font-sans text-[11px] tracking-[0.2em] uppercase text-cream/40 hover:text-cream transition-colors duration-300"
-                  >
-                    {cat.label}
-                  </Link>
-                  {i < serviceLinks.length - 1 && (
-                    <span className="text-cream/15 text-xs">·</span>
-                  )}
-                </span>
-              ))}
-            </m.div>
+
 
             {/* Bottom info */}
             <m.div
