@@ -76,6 +76,8 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
+  const expandedContainerRef = useRef<HTMLDivElement>(null);
+
   // ── Scroll tracking for arrows ──
   useEffect(() => {
     if (!isExpanded) {
@@ -98,6 +100,27 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
       el.removeEventListener('scroll', handleScroll);
       clearTimeout(t);
     };
+  }, [isExpanded]);
+
+  // ── Keyboard arrow keys for horizontal scroll ──
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    // Auto-focus the expanded container so key events work immediately
+    expandedContainerRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        scrollBy('right');
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        scrollBy('left');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isExpanded]);
 
   const scrollBy = (dir: 'left' | 'right') => {
