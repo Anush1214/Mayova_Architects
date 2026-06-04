@@ -11,6 +11,7 @@ import { teamMembers } from '@/data/siteData';
 
 export default function About() {
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-cream">
       <Sidebar />
 
@@ -222,5 +223,6 @@ export default function About() {
 
       <Footer />
     </div>
+    </LazyMotion>
   );
 }
