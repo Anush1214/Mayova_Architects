@@ -16,7 +16,7 @@ export default function About() {
 
       <PageHeader
         title="About"
-        subtitle="At Mayova, we believe that great architecture emerges from the dialogue between light, material, and human experience."
+        subtitle="At MAYOVA, we believe meaningful architecture emerges from a deep understanding of people, place, and purpose. Every project begins with a conversation and evolves into a space that balances beauty, functionality, and lasting value."
       />
 
       {/* About Company */}
@@ -33,17 +33,20 @@ export default function About() {
                 Our Story
               </p>
               <h2 className="font-serif text-3xl lg:text-4xl text-charcoal leading-tight mb-8">
-                Founded in 2018 by two architects who share a belief that{' '}
+                Founded on the belief that every space carries a story{' '}
                 <span className="italic text-stone-dark">
-                  every space tells a story.
+                  waiting to be told.
                 </span>
               </h2>
               <p className="font-sans text-sm text-stone-dark leading-relaxed">
-                From our studios in London, Tokyo, and Dubai, we work across
-                scales and typologies — from private residences to cultural
-                institutions, from interior renovations to urban master plans.
-                What unites our work is an unwavering commitment to craft,
-                context, and the poetics of space.
+                MAYOVA was born from a shared vision of reimagining the way people experience space. 
+                Rooted in thoughtful design and careful craftsmanship, our work spans architecture, 
+                interiors, and design-build projects, each shaped by the unique aspirations of its users.
+                
+                
+                Whether designing a home, a workplace, or a commercial environment, we approach every project with 
+                curiosity, creativity, and attention to detail. We believe great design is not only seen—it is felt 
+                through the experiences it creates and the stories it allows people to live.
               </p>
             </motion.div>
             <motion.div
@@ -55,29 +58,29 @@ export default function About() {
             >
               <div className="grid grid-cols-2 gap-8 w-full">
                 <div>
-                  <p className="font-serif text-5xl text-charcoal">48</p>
+                  {/* <p className="font-serif text-5xl text-charcoal"></p>
                   <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone mt-2">
                     Projects Completed
-                  </p>
+                  </p> */}
                 </div>
                 <div>
-                  <p className="font-serif text-5xl text-charcoal">12</p>
+                  {/* <p className="font-serif text-5xl text-charcoal">12</p>
                   <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone mt-2">
                     Awards Won
-                  </p>
+                  </p> */}
                 </div>
-                <div>
+                {/* <div>
                   <p className="font-serif text-5xl text-charcoal">3</p>
                   <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone mt-2">
                     Global Studios
                   </p>
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                   <p className="font-serif text-5xl text-charcoal">35</p>
                   <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-stone mt-2">
                     Team Members
                   </p>
-                </div>
+                </div> */}
               </div>
             </motion.div>
           </div>
