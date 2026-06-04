@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -57,23 +57,34 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
     }
   };
 
-  // Check scroll position for footer
-  useEffect(() => {
-    const handleScroll = () => {
+  // Check scroll position for footer — throttled via rAF
+  const rafId = useRef<number>(0);
+  const isDarkRef = useRef(false);
+
+  const handleScroll = useCallback(() => {
+    if (rafId.current) return;
+    rafId.current = requestAnimationFrame(() => {
       const scrollY = window.scrollY;
       const docHeight = document.documentElement.scrollHeight;
       const winHeight = window.innerHeight;
-      
-      if (docHeight - (scrollY + winHeight) < 400) {
-        setIsDarkBg(true);
-      } else {
-        setIsDarkBg(false);
+      const nowDark = docHeight - (scrollY + winHeight) < 400;
+
+      if (nowDark !== isDarkRef.current) {
+        isDarkRef.current = nowDark;
+        setIsDarkBg(nowDark);
       }
-    };
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+      rafId.current = 0;
+    });
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, [handleScroll]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -328,7 +339,8 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
                 width={36}
                 height={54}
                 className="object-contain drop-shadow-[0_0_12px_rgba(250,247,242,0.15)]"
-                unoptimized
+                quality={75}
+                sizes="36px"
               />
             </div>
 

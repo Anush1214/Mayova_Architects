@@ -17,8 +17,6 @@
 }
 
 /* ===== Base Reset ===== */
-/* Note: Tailwind v4's @import "tailwindcss" includes Preflight reset.
-   Only box-sizing is added here as a safety net. */
 *,
 *::before,
 *::after {
@@ -41,7 +39,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== Custom Scrollbar (Premium thin style) ===== */
+/* ===== Custom Scrollbar ===== */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -74,28 +72,25 @@ body {
   font-family: var(--font-sans);
 }
 
-/* ===== Premium Grain Overlay ===== */
-.grain-overlay::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
+/* ===== Premium Grain Overlay (desktop only for performance) ===== */
+@media (min-width: 768px) {
+  .grain-overlay::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
 }
 
-/* ===== Smooth Cursor ===== */
-.cursor-smooth {
-  cursor: default;
-}
-
-/* ===== Letter Spacing Utility ===== */
+/* ===== Letter Spacing Utilities ===== */
 .tracking-ultra-wide {
   letter-spacing: 0.35em;
 }
@@ -185,12 +180,14 @@ body {
 /* ===== Sidebar Logo ===== */
 .sidebar-logo {
   display: inline-block;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .sidebar-logo span {
   display: inline-block;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* ===== Sidebar Nav Item ===== */
@@ -224,8 +221,13 @@ body {
   display: none;
 }
 
-@media (pointer: fine) {
-  body:not(.studio-mode) * {
+/* ===== Custom Cursor (desktop with fine pointer only) ===== */
+@media (pointer: fine) and (min-width: 768px) {
+  body:not(.studio-mode) a,
+  body:not(.studio-mode) button,
+  body:not(.studio-mode) [role="button"],
+  body:not(.studio-mode) .interactive,
+  body:not(.studio-mode) .nav-link {
     cursor: none !important;
   }
 }

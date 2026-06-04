@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ExpandableProps {
@@ -42,6 +42,62 @@ function ExpandableSection({ title, children }: ExpandableProps) {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+const MAPS_URL = "https://maps.google.com/maps?q=1st%20floor,%20Mayova%20Architects%20Gowri%20Arcade,%20Bananje,%20Brahmagiri,%20Udupi,%20Karnataka%20576101,%20India&t=&z=15&ie=UTF8&iwloc=&output=embed";
+
+function LazyMap() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' } // start loading 200px before visible
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <motion.div
+      ref={containerRef}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="flex-1 w-full h-[300px] lg:h-auto min-h-[300px] rounded-lg overflow-hidden border border-cream/10 relative group mt-8 lg:mt-0"
+    >
+      <div className="absolute inset-0 bg-off-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none z-10" />
+      {isVisible ? (
+        <iframe
+          src={MAPS_URL}
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="MAYOVA Architects office location on Google Maps"
+          className="absolute inset-0 w-full h-full grayscale invert opacity-70 group-hover:grayscale-0 group-hover:invert-0 group-hover:opacity-100 transition-[filter,opacity] duration-700 ease-in-out"
+        />
+      ) : (
+        <div className="absolute inset-0 w-full h-full bg-off-black/40 flex items-center justify-center">
+          <span className="font-sans text-[10px] tracking-ultra-wide uppercase text-cream/40">
+            Loading map…
+          </span>
+        </div>
+      )}
+    </motion.div>
   );
 }
 
@@ -165,30 +221,8 @@ export default function Footer() {
               </motion.div>
             </div>
 
-            {/* Map Preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{
-                duration: 0.8,
-                delay: 0.2,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-              className="flex-1 w-full h-[300px] lg:h-auto min-h-[300px] rounded-lg overflow-hidden border border-cream/10 relative group mt-8 lg:mt-0"
-            >
-              <div className="absolute inset-0 bg-off-black/20 group-hover:bg-transparent transition-colors duration-700 pointer-events-none z-10"></div>
-              <iframe 
-                src="https://maps.google.com/maps?q=1st%20floor,%20Mayova%20Architects%20Gowri%20Arcade,%20Bananje,%20Brahmagiri,%20Udupi,%20Karnataka%20576101,%20India&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen={true} 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                className="absolute inset-0 w-full h-full grayscale invert opacity-70 group-hover:grayscale-0 group-hover:invert-0 group-hover:opacity-100 transition-all duration-700 ease-in-out"
-              ></iframe>
-            </motion.div>
+            {/* Map Preview — lazy loaded via IntersectionObserver */}
+            <LazyMap />
           </div>
 
           {/* Services bar */}

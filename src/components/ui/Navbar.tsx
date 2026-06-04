@@ -1,9 +1,10 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Project, getProjects } from '@/data/projects';
 
@@ -18,12 +19,18 @@ export default function Navbar() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDarkBg, setIsDarkBg] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const rafId = useRef<number>(0);
+  const isDarkRef = useRef(false);
 
+  // Lazy-load projects only when search is opened (not on mount)
   useEffect(() => {
-    getProjects().then(setAllProjects);
-  }, []);
+    if (isSearchOpen && allProjects.length === 0) {
+      getProjects().then(setAllProjects);
+    }
+  }, [isSearchOpen, allProjects.length]);
 
   const filteredProjects = allProjects.filter(p => 
     p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -53,24 +60,31 @@ export default function Navbar() {
     }
   };
 
-  const [isDarkBg, setIsDarkBg] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
+  // Throttled scroll handler using rAF — fires at most once per frame
+  const handleScroll = useCallback(() => {
+    if (rafId.current) return;
+    rafId.current = requestAnimationFrame(() => {
       const scrollY = window.scrollY;
       const docHeight = document.documentElement.scrollHeight;
       const winHeight = window.innerHeight;
+      const nowDark = docHeight - (scrollY + winHeight) < 400;
       
-      if (docHeight - (scrollY + winHeight) < 400) {
-        setIsDarkBg(true);
-      } else {
-        setIsDarkBg(false);
+      if (nowDark !== isDarkRef.current) {
+        isDarkRef.current = nowDark;
+        setIsDarkBg(nowDark);
       }
-    };
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+      rafId.current = 0;
+    });
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, [handleScroll]);
 
   if (pathname.startsWith('/studio')) return null;
 
@@ -94,10 +108,11 @@ export default function Navbar() {
           alt="MAYOVA Architects"
           width={32}
           height={48}
-          className={`object-contain transition-all duration-500 group-hover:scale-105 ${isDarkBg ? 'drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]' : ''}`}
-          unoptimized
+          className={`object-contain transition-transform duration-500 group-hover:scale-105 ${isDarkBg ? 'drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]' : ''}`}
+          quality={75}
+          sizes="32px"
         />
-        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-all duration-500 opacity-90 ${textColorClass} ${textHoverClass} group-hover:scale-110 group-hover:tracking-[0.25em]`}>
+        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}>
           MAYOVA
         </span>
       </Link>
@@ -110,7 +125,7 @@ export default function Navbar() {
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
           >
-            <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
+            <span className="inline-block transition-transform duration-500 group-hover:scale-110">
               {isSearchOpen ? 'Close Search' : 'Quick Search'}
             </span>
           </button>
@@ -163,7 +178,7 @@ export default function Navbar() {
             onClick={(e) => handleClick(e, link.href)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
           >
-            <span className="inline-block transition-all duration-500 group-hover:scale-110 group-hover:tracking-[0.25em]">
+            <span className="inline-block transition-transform duration-500 group-hover:scale-110">
               {link.label}
             </span>
           </Link>

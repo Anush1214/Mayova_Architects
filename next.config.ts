@@ -1,16 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable strict mode — GSAP timelines and Three.js don't survive double-mounting
+  // Disable strict mode — GSAP timelines don't survive double-mounting
   reactStrictMode: false,
-
-  // Transpile Three.js packages for compatibility
-  transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
 
   // Image optimization
   images: {
-    formats: ['image/webp', 'image/avif'],
-    qualities: [75, 80, 85, 90, 95],
+    formats: ['image/avif', 'image/webp'],
+    qualities: [50, 65, 70, 75],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000, // 1 year — images from Sanity are immutable
     remotePatterns: [
       {
         protocol: 'https',
@@ -18,9 +18,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
-  // Enable Turbopack (Next.js 16 default)
-  turbopack: {},
 };
 
 export default nextConfig;
