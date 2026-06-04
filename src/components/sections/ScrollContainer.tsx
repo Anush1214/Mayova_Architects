@@ -423,9 +423,9 @@ const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ p
                   transition={{ duration: 1, ease: EASE }}
                 >
                   <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-charcoal leading-tight">
-                    A house is a<br />
-                    <span className="italic text-stone-dark">slow ritual</span><br />
-                    of inhabiting time.
+                    Every space tells<br />
+                    <span className="italic text-stone-dark">a unique story</span><br />
+                    worth inhabiting.
                   </h2>
                 </m.div>
                 <m.div
@@ -436,9 +436,9 @@ const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ p
                   className="flex flex-col justify-center"
                 >
                   <p className="font-sans text-xs sm:text-sm text-stone-dark leading-relaxed max-w-lg mb-8 sm:mb-10">
-                    We design for the long arc — for the way a stone wall darkens after rain, for the way
-                    a child finds their corner of a room. Our practice spans interior, planning, landscape
-                    and architecture, but the work is always the same: to make space for the quiet things.
+                    We create spaces that balance function with emotion, tradition with innovation, and simplicity with character. 
+                    Our practice spans architecture, interiors, and design-build projects, united by a belief that thoughtful spaces 
+                    can elevate the way we live, work, and connect.
                   </p>
                   <button
                     className="nav-link font-sans text-[10px] sm:text-[11px] tracking-ultra-wide uppercase text-charcoal hover:text-warm-gold transition-colors duration-500 inline-flex items-center gap-3 group cursor-pointer w-fit"
