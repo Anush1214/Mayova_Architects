@@ -1,8 +1,8 @@
 'use client';
 
-import { forwardRef, useState, useCallback, useRef, useEffect } from 'react';
+import { forwardRef, useState, useCallback, useRef, useEffect, memo } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Project } from '@/data/projects';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
@@ -55,7 +55,7 @@ function ImgPanel({ src, alt, wide }: { src: string; alt: string; wide?: boolean
         alt={alt}
         fill
         className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]"
-        quality={75}
+        quality={65}
         loading="lazy"
         sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 60vw"
       />
@@ -127,7 +127,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
       )}
 
       {/* Project Section */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
@@ -147,14 +147,14 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
         </div>
 
         {/* ══════════ IMAGE AREA — morphs in-place ══════════ */}
-        <motion.div
+        <m.div
           layout
           transition={{ layout: { duration: 0.65, ease: EASE } }}
           className={isExpanded ? 'relative' : 'max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12'}
         >
           {/* ── COLLAPSED: single cover image ── */}
           {!isExpanded && (
-            <motion.div
+            <m.div
               layout
               layoutId={`cover-${project.id}`}
               onClick={onToggle}
@@ -195,18 +195,18 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     transition: 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
                   loading={index === 0 ? 'eager' : 'lazy'}
-                  quality={80}
+                  quality={70}
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1400px"
                 />
                 {/* Dark overlay on hover */}
                 <div
-                  className="absolute inset-0 transition-all duration-700"
+                  className="absolute inset-0 transition-[background-color] duration-700"
                   style={{
                     backgroundColor: isHovered ? 'rgba(44,44,44,0.16)' : 'rgba(44,44,44,0)',
                   }}
                 />
                 {/* "View Project" pill — desktop hover */}
-                <motion.div
+                <m.div
                   className="absolute inset-0 hidden md:flex items-center justify-center"
                   initial={false}
                   animate={{ opacity: isHovered ? 1 : 0 }}
@@ -218,7 +218,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     </span>
                     <span className="text-charcoal text-xs">→</span>
                   </div>
-                </motion.div>
+                </m.div>
 
                 {/* "View Project" badge — mobile only, always visible */}
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between md:hidden pointer-events-none">
@@ -235,12 +235,12 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {/* ── EXPANDED: horizontal scroll strip ── */}
           {isExpanded && (
-            <motion.div
+            <m.div
               layout
               layoutId={`cover-${project.id}`}
               className="relative w-full"
@@ -249,7 +249,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
               {/* Left arrow */}
               <AnimatePresence>
                 {showLeftArrow && (
-                  <motion.button
+                  <m.button
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
@@ -259,14 +259,14 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     aria-label="Scroll left"
                   >
                     <span className="text-charcoal text-sm sm:text-base">←</span>
-                  </motion.button>
+                  </m.button>
                 )}
               </AnimatePresence>
 
               {/* Right arrow */}
               <AnimatePresence>
                 {showRightArrow && (
-                  <motion.button
+                  <m.button
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
@@ -276,12 +276,12 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     aria-label="Scroll right"
                   >
                     <span className="text-charcoal text-sm sm:text-base">→</span>
-                  </motion.button>
+                  </m.button>
                 )}
               </AnimatePresence>
 
               {/* Close button */}
-              <motion.button
+              <m.button
                 initial={{ opacity: 0, scale: 0.7 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.25, duration: 0.35, ease: EASE }}
@@ -290,7 +290,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                 aria-label="Collapse gallery"
               >
                 <span className="text-charcoal group-hover:text-warm-gold transition-colors text-xs sm:text-sm">✕</span>
-              </motion.button>
+              </m.button>
 
               {/* Horizontal scrollable strip */}
               <div
@@ -303,7 +303,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                 }}
               >
                 {/* Desc card */}
-                <motion.div
+                <m.div
                   className="flex-shrink-0"
                   style={{ scrollSnapAlign: 'start' }}
                   initial={{ opacity: 0, x: -30 }}
@@ -311,7 +311,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                   transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
                 >
                   <DescCard project={project} index={index} />
-                </motion.div>
+                </m.div>
 
                 {/* Cover image as first panel */}
                 <div
@@ -324,7 +324,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                       alt={project.title}
                       fill
                       className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]"
-                      quality={80}
+                      quality={70}
                       sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 60vw"
                     />
                     <div className="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -333,7 +333,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
 
                 {/* Gallery images — staggered entrance */}
                 {project.images.map((src, ii) => (
-                  <motion.div
+                  <m.div
                     key={src}
                     className="flex-shrink-0"
                     style={{ scrollSnapAlign: 'start' }}
@@ -346,12 +346,12 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     }}
                   >
                     <ImgPanel src={src} alt={`${project.title} ${ii + 1}`} wide={ii === 0} />
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           )}
-        </motion.div>
+        </m.div>
 
         {/* Title + Meta — always below the image area */}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
@@ -381,7 +381,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -397,61 +397,63 @@ const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ p
   }, []);
 
   return (
-    <LayoutGroup>
-      <div ref={ref} className="relative z-20">
-        {projects.map((project, i) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            index={i}
-            isExpanded={expandedId === project.id}
-            onToggle={() => handleToggle(project.id)}
-          />
-        ))}
+    <LazyMotion features={domAnimation}>
+      <LayoutGroup>
+        <div ref={ref} className="relative z-20">
+          {projects.map((project, i) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              index={i}
+              isExpanded={expandedId === project.id}
+              onToggle={() => handleToggle(project.id)}
+            />
+          ))}
 
-        {/* ── Vision / About ─────────────────────────────────────────────── */}
-        <section id="about" className="py-20 sm:py-32 lg:py-40 bg-cream">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 1, ease: EASE }}
-              >
-                <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-charcoal leading-tight">
-                  A house is a<br />
-                  <span className="italic text-stone-dark">slow ritual</span><br />
-                  of inhabiting time.
-                </h2>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 1, delay: 0.2, ease: EASE }}
-                className="flex flex-col justify-center"
-              >
-                <p className="font-sans text-xs sm:text-sm text-stone-dark leading-relaxed max-w-lg mb-8 sm:mb-10">
-                  We design for the long arc — for the way a stone wall darkens after rain, for the way
-                  a child finds their corner of a room. Our practice spans interior, planning, landscape
-                  and architecture, but the work is always the same: to make space for the quiet things.
-                </p>
-                <button
-                  className="nav-link font-sans text-[10px] sm:text-[11px] tracking-ultra-wide uppercase text-charcoal hover:text-warm-gold transition-colors duration-500 inline-flex items-center gap-3 group cursor-pointer w-fit"
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          {/* ── Vision / About ─────────────────────────────────────────────── */}
+          <section id="about" className="py-20 sm:py-32 lg:py-40 bg-cream">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24">
+                <m.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ duration: 1, ease: EASE }}
                 >
-                  Explore Projects
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                </button>
-              </motion.div>
+                  <h2 className="font-serif text-3xl sm:text-4xl lg:text-6xl text-charcoal leading-tight">
+                    A house is a<br />
+                    <span className="italic text-stone-dark">slow ritual</span><br />
+                    of inhabiting time.
+                  </h2>
+                </m.div>
+                <m.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ duration: 1, delay: 0.2, ease: EASE }}
+                  className="flex flex-col justify-center"
+                >
+                  <p className="font-sans text-xs sm:text-sm text-stone-dark leading-relaxed max-w-lg mb-8 sm:mb-10">
+                    We design for the long arc — for the way a stone wall darkens after rain, for the way
+                    a child finds their corner of a room. Our practice spans interior, planning, landscape
+                    and architecture, but the work is always the same: to make space for the quiet things.
+                  </p>
+                  <button
+                    className="nav-link font-sans text-[10px] sm:text-[11px] tracking-ultra-wide uppercase text-charcoal hover:text-warm-gold transition-colors duration-500 inline-flex items-center gap-3 group cursor-pointer w-fit"
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  >
+                    Explore Projects
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  </button>
+                </m.div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <div className="h-12 sm:h-16" />
-      </div>
-    </LayoutGroup>
+          <div className="h-12 sm:h-16" />
+        </div>
+      </LayoutGroup>
+    </LazyMotion>
   );
 });
 

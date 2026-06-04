@@ -1,25 +1,33 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+/* ── Fonts: load only the weights actually used in the design ── */
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
-  weight: ['200', '300', '400', '500'],
+  weight: ['300', '400'],            // body=300, UI labels=400
 });
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-serif',
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '600'],            // headings=400/600
   style: ['normal', 'italic'],
 });
+
 import Navbar from '@/components/ui/Navbar';
-import CustomCursor from '@/components/ui/CustomCursor';
+import CursorLoader from '@/components/ui/CursorLoader';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#FAF7F2',
+};
 
 export const metadata: Metadata = {
   title: 'MAYOVA Architects',
@@ -57,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`h-full antialiased ${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <body className="min-h-full grain-overlay font-sans">
-        <CustomCursor />
+        <CursorLoader />
         <Navbar />
         {children}
         <Analytics />
