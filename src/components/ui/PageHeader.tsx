@@ -10,7 +10,7 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, subtitle }: PageHeaderProps) {
   return (
-    <header className="pt-32 pb-16 lg:pt-40 lg:pb-20">
+    <header className="pt-32 pb-10 lg:pt-40 lg:pb-14">
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
         {/* Breadcrumb */}
         <motion.div
@@ -46,7 +46,7 @@ export default function PageHeader({ title, subtitle }: PageHeaderProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="font-sans text-sm text-stone-dark mt-6 max-w-xl leading-relaxed"
+            className="font-sans text-base text-stone-dark mt-6 max-w-xl leading-relaxed"
           >
             {subtitle}
           </motion.p>
