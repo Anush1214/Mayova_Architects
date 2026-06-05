@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Project } from '@/data/projects';
@@ -87,7 +87,7 @@ export default function ProjectReveal({ project, index }: ProjectRevealProps) {
           >
             <div className="project-image-wrapper overflow-hidden relative">
               <div ref={imageRef} className="relative">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, clipPath: 'inset(100% 0 0 0)' }}
                   whileInView={{ opacity: 1, clipPath: 'inset(0% 0 0 0)' }}
                   viewport={{ once: true, margin: '-100px' }}
@@ -105,7 +105,7 @@ export default function ProjectReveal({ project, index }: ProjectRevealProps) {
                     loading="lazy"
                     quality={85}
                   />
-                </motion.div>
+                </m.div>
               </div>
             </div>
           </div>

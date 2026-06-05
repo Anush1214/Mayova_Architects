@@ -64,6 +64,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full antialiased ${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Preconnect to Sanity CDN for faster LCP */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+      </head>
       <body className="min-h-full grain-overlay font-sans">
         <CursorLoader />
         <Navbar />

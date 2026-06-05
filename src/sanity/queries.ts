@@ -44,12 +44,12 @@ export async function getProjects(): Promise<Project[]> {
     category: p.category ?? '',
     location: p.location ?? '',
     coverImage: p.coverImage
-      ? urlFor(p.coverImage).width(1400).quality(80).auto('format').url()
+      ? urlFor(p.coverImage).width(1200).quality(70).auto('format').url()
       : '',
     images: Array.isArray(p.images)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? p.images.map((img: any) =>
-          urlFor(img).width(1600).quality(80).auto('format').url()
+          urlFor(img).width(1200).quality(65).auto('format').url()
         )
       : [],
   }))

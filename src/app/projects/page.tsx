@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     'Explore the portfolio of MAYOVA Architects. Browse our work across architecture, interior design, urban planning, and landscape design.',
 };
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function ProjectsPage() {
   const projects = await getProjects();

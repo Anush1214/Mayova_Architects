@@ -249,9 +249,10 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
               width={cell * 2}
               height={cell * 2}
               className="w-full h-full object-contain"
-              priority
-              quality={70}
-              sizes="130px"
+              priority={i < 2}
+              loading="eager"
+              quality={50}
+              sizes="(max-width: 768px) 75px, 130px"
             />
           </div>
         ))}

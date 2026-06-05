@@ -76,6 +76,8 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
+  const expandedContainerRef = useRef<HTMLDivElement>(null);
+
   // ── Scroll tracking for arrows ──
   useEffect(() => {
     if (!isExpanded) {
@@ -98,6 +100,27 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
       el.removeEventListener('scroll', handleScroll);
       clearTimeout(t);
     };
+  }, [isExpanded]);
+
+  // ── Keyboard arrow keys for horizontal scroll ──
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    // Auto-focus the expanded container so key events work immediately
+    expandedContainerRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        scrollBy('right');
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        scrollBy('left');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isExpanded]);
 
   const scrollBy = (dir: 'left' | 'right') => {
@@ -194,9 +217,11 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                     transition: 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  quality={70}
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1400px"
+                  loading={index === 0 ? undefined : 'lazy'}
+                  priority={index === 0}
+                  fetchPriority={index === 0 ? 'high' : undefined}
+                  quality={65}
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1200px"
                 />
                 {/* Dark overlay on hover */}
                 <div
