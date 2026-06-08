@@ -117,209 +117,210 @@ export default function Footer() {
 
   return (
     <LazyMotion features={domAnimation}>
-    <>
-      {/* Page-level fade overlay */}
-      <AnimatePresence>
-        {isFading && (
-          <m.div
-            key="back-to-top-fade"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: 'easeInOut' }}
-            className="fixed inset-0 z-[9999] bg-off-black pointer-events-none"
-          />
-        )}
-      </AnimatePresence>
+      <>
+        {/* Page-level fade overlay */}
+        <AnimatePresence>
+          {isFading && (
+            <m.div
+              key="back-to-top-fade"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+              className="fixed inset-0 z-[9999] bg-off-black pointer-events-none"
+            />
+          )}
+        </AnimatePresence>
 
-      <footer
-        id="contact"
-        className="relative bg-off-black text-cream"
-      >
-      {/* Main Content */}
-      <div className="py-24 lg:py-32">
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <div className="flex flex-col lg:flex-row justify-between gap-16 lg:gap-24">
-            <div className="flex-1 lg:max-w-xl">
-              {/* Header */}
-              <m.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{
-                  duration: 0.8,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-                className="font-serif text-4xl lg:text-5xl tracking-wide text-cream leading-tight mb-16"
-              >
-                Created
-                <br />
-                To Create.
-              </m.h2>
+        <footer
+          id="contact"
+          className="relative bg-off-black text-cream"
+        >
+          {/* Main Content */}
+          <div className="py-24 lg:py-32">
+            <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+              <div className="flex flex-col lg:flex-row justify-between gap-16 lg:gap-24">
+                <div className="flex-1 lg:max-w-xl">
+                  {/* Header */}
+                  <m.h2
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-100px' }}
+                    transition={{
+                      duration: 0.8,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
+                    className="font-serif text-4xl lg:text-5xl tracking-wide text-cream leading-tight mb-16"
+                  >
+                    Created
+                    <br />
+                    To Create.
+                  </m.h2>
 
-              {/* Expandable Sections — per workflow: Email +, Socials +, Office + */}
+                  {/* Expandable Sections — per workflow: Email +, Socials +, Office + */}
+                  <m.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-100px' }}
+                    transition={{
+                      duration: 0.8,
+                      delay: 0.1,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
+                    className="space-y-4"
+                  >
+                    <ExpandableSection title="Email">
+                      <a
+                        href="mailto:vigneshvrao@mayovaarchitect.com"
+                        className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+                      >
+                        vigneshvrao@mayovaarchitect.com
+                      </a>
+                      <a
+                        href="https://www.mayovaarchitect.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
+                      >
+                        www.mayovaarchitect.com
+                      </a>
+                    </ExpandableSection>
+
+                    <ExpandableSection title="Socials">
+                      <div className="flex items-center gap-5 pt-2">
+                        <a
+                          href="https://www.instagram.com/mayova_architects"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-cream/80 hover:text-warm-gold hover:scale-110 transition-all duration-300"
+                          aria-label="Instagram Profile"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="w-5 h-5"
+                          >
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                          </svg>
+                        </a>
+                        <a
+                          href="https://www.linkedin.com/company/mayova-architects/?originalSubdomain=in"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-cream/80 hover:text-warm-gold hover:scale-110 transition-all duration-300"
+                          aria-label="LinkedIn Profile"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="w-5 h-5"
+                          >
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                            <rect width="4" height="12" x="2" y="9" />
+                            <circle cx="4" cy="4" r="2" />
+                          </svg>
+                        </a>
+                      </div>
+                    </ExpandableSection>
+
+                    <ExpandableSection title="Office">
+                      <p className="font-sans text-sm text-cream/80">
+                        Gowri Arcade, 1st Floor
+                      </p>
+                      <p className="font-sans text-sm text-cream/80">
+                        Shiribeedu, Udupi - 576101
+                      </p>
+                      <p className="font-sans text-sm text-cream/80">
+                        Karnataka, India
+                      </p>
+                      <p className="font-sans text-sm text-cream/80 mt-2">
+                        +91 77958-90714
+                        +91 70269-10721
+                      </p>
+                    </ExpandableSection>
+                  </m.div>
+                </div>
+
+                {/* Map Preview — lazy loaded via IntersectionObserver */}
+                <LazyMap />
+              </div>
+
+              {/* Services bar */}
               <m.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{
-                  duration: 0.8,
-                  delay: 0.1,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-                className="space-y-4"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 1, delay: 0.4 }}
+                className="mt-20 pt-8 border-t border-cream/10"
               >
-                <ExpandableSection title="Email">
-                  <a
-                    href="mailto:vigneshvrao@mayovaarchitect.com"
-                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
-                  >
-                    vigneshvrao@mayovaarchitect.com
-                  </a>
-                  <a
-                    href="https://www.mayovaarchitect.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block font-sans text-sm text-cream/80 hover:text-warm-gold transition-colors duration-500"
-                  >
-                    www.mayovaarchitect.com
-                  </a>
-                </ExpandableSection>
+                <div className="flex flex-wrap items-center justify-center gap-4 lg:gap-8">
+                  {['Architecture', 'Interior', 'Landscaping', 'Product Designing'].map((service, i) => (
+                    <span key={service} className="flex items-center gap-4 lg:gap-8">
+                      <span className="font-sans text-sm lg:text-base text-cream/50 tracking-wider">
+                        {service}
+                      </span>
+                      {i < 3 && (
+                        <span className="text-cream/20">|</span>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              </m.div>
 
-                <ExpandableSection title="Socials">
-                  <div className="flex items-center gap-5 pt-2">
-                    <a
-                      href="https://www.instagram.com/mayova_architects"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-cream/80 hover:text-warm-gold hover:scale-110 transition-all duration-300"
-                      aria-label="Instagram Profile"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="w-5 h-5"
-                      >
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                      </svg>
-                    </a>
-                    <a
-                      href="https://www.linkedin.com/company/mayova-architects/?originalSubdomain=in"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-cream/80 hover:text-warm-gold hover:scale-110 transition-all duration-300"
-                      aria-label="LinkedIn Profile"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="w-5 h-5"
-                      >
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                        <rect width="4" height="12" x="2" y="9" />
-                        <circle cx="4" cy="4" r="2" />
-                      </svg>
-                    </a>
-                  </div>
-                </ExpandableSection>
-
-                <ExpandableSection title="Office">
-                  <p className="font-sans text-sm text-cream/80">
-                    Gowri Arcade, 1st Floor
-                  </p>
-                  <p className="font-sans text-sm text-cream/80">
-                    Shiribeedu, Udupi - 576101
-                  </p>
-                  <p className="font-sans text-sm text-cream/80">
-                    Karnataka, India
-                  </p>
-                  <p className="font-sans text-sm text-cream/80 mt-2">
-                    +91 77958-90714
-                  </p>
-                </ExpandableSection>
+              {/* BACK TO TOP button — per workflow */}
+              <m.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="mt-12 flex justify-center relative z-[60]"
+              >
+                <button
+                  onClick={scrollToTop}
+                  className="nav-link relative z-[60] px-6 py-3 rounded-full group flex items-center gap-3 font-sans text-[11px] tracking-ultra-wide uppercase text-cream/60 hover:text-warm-gold transition-colors duration-500 cursor-pointer"
+                >
+                  <span className="inline-block transition-transform duration-300 group-hover:-translate-y-1">↑</span>
+                  Back To Top
+                </button>
               </m.div>
             </div>
-
-            {/* Map Preview — lazy loaded via IntersectionObserver */}
-            <LazyMap />
           </div>
 
-          {/* Services bar */}
-          <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="mt-20 pt-8 border-t border-cream/10"
-          >
-            <div className="flex flex-wrap items-center justify-center gap-4 lg:gap-8">
-              {['Architecture', 'Interior', 'Landscaping', 'Product Designing'].map((service, i) => (
-                <span key={service} className="flex items-center gap-4 lg:gap-8">
-                  <span className="font-sans text-sm lg:text-base text-cream/50 tracking-wider">
-                    {service}
-                  </span>
-                  {i < 3 && (
-                    <span className="text-cream/20">|</span>
-                  )}
-                </span>
-              ))}
-            </div>
-          </m.div>
-
-          {/* BACK TO TOP button — per workflow */}
-          <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="mt-12 flex justify-center relative z-[60]"
-          >
-            <button
-              onClick={scrollToTop}
-              className="nav-link relative z-[60] px-6 py-3 rounded-full group flex items-center gap-3 font-sans text-[11px] tracking-ultra-wide uppercase text-cream/60 hover:text-warm-gold transition-colors duration-500 cursor-pointer"
+          {/* Giant MAYOVA Text at Bottom */}
+          <div className="relative overflow-hidden pb-8">
+            <m.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{
+                duration: 1.2,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+              className="max-w-[1400px] mx-auto px-8 lg:px-12"
             >
-              <span className="inline-block transition-transform duration-300 group-hover:-translate-y-1">↑</span>
-              Back To Top
-            </button>
-          </m.div>
-        </div>
-      </div>
-
-      {/* Giant MAYOVA Text at Bottom */}
-      <div className="relative overflow-hidden pb-8">
-        <m.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{
-            duration: 1.2,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          }}
-          className="max-w-[1400px] mx-auto px-8 lg:px-12"
-        >
-          <h2 className="font-serif text-[12vw] lg:text-[14vw] text-cream/[0.06] leading-none tracking-wider select-none uppercase">
-            MAYOVA
-          </h2>
-        </m.div>
-      </div>
-    </footer>
-    </>
+              <h2 className="font-serif text-[12vw] lg:text-[14vw] text-cream/[0.06] leading-none tracking-wider select-none uppercase">
+                MAYOVA
+              </h2>
+            </m.div>
+          </div>
+        </footer>
+      </>
     </LazyMotion>
   );
 }

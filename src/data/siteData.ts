@@ -164,6 +164,7 @@ export const siteConfig = {
     area: 'Shiribeedu, Udupi - 576101',
     state: 'Karnataka, India',
     phone: '+91 77958-90714',
+    phone2: '+91 70269-10721',
   },
   contact: {
     email: 'vigneshvrao@mayovaarchitect.com',
