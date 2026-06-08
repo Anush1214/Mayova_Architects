@@ -250,7 +250,7 @@ export default function Footer() {
                         Karnataka, India
                       </p>
                       <p className="font-sans text-sm text-cream/80 mt-2">
-                        +91 77958-90714
+                        +91 77958-90714<br></br>
                         +91 70269-10721
                       </p>
                     </ExpandableSection>
