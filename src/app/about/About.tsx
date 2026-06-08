@@ -21,7 +21,7 @@ export default function About() {
       />
 
       {/* About Company */}
-      <section className="py-16 lg:py-24">
+      <section className="py-10 lg:py-16">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
             <m.div
@@ -39,7 +39,7 @@ export default function About() {
                   waiting to be told.
                 </span>
               </h2>
-              <p className="font-sans text-sm text-stone-dark leading-relaxed">
+              <p className="font-sans text-base text-stone-dark leading-relaxed">
                 MAYOVA was born from a shared vision of reimagining the way people experience space. 
                 Rooted in thoughtful design and careful craftsmanship, our work spans architecture, 
                 interiors, and design-build projects, each shaped by the unique aspirations of its users.
@@ -89,7 +89,7 @@ export default function About() {
       </section>
 
       {/* Team / Founders */}
-      <section id="team" className="py-16 lg:py-24 bg-cream-dark">
+      <section id="team" className="py-10 lg:py-16 bg-cream-dark">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -139,7 +139,7 @@ export default function About() {
                   <p className="font-sans text-[10px] tracking-ultra-wide uppercase text-warm-gold mb-6">
                     {member.role}
                   </p>
-                  <p className="font-sans text-sm text-stone-dark leading-relaxed mb-4">
+                  <p className="font-sans text-base text-stone-dark leading-relaxed mb-4">
                     {member.bio}
                   </p>
                   {member.linkedin && (
@@ -176,7 +176,7 @@ export default function About() {
       </section>
 
       {/* Philosophy */}
-      <section className="py-24 lg:py-32">
+      <section className="py-12 lg:py-20">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -208,7 +208,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-sans text-sm text-stone-dark leading-relaxed"
+              className="font-sans text-base text-stone-dark leading-relaxed"
             >
               We approach each project with curiosity, care, and a commitment to meaningful
               design. By understanding the unique aspirations of our clients and the character 
