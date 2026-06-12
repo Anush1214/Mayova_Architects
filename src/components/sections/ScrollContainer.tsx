@@ -57,7 +57,10 @@ function ImgPanel({ src, alt, wide }: { src: string; alt: string; wide?: boolean
         className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]"
         quality={65}
         loading="lazy"
-        sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 60vw"
+        sizes={wide
+          ? '(max-width: 640px) 82vw, (max-width: 768px) 75vw, (max-width: 1024px) 58vw, 52vw'
+          : '(max-width: 640px) 78vw, (max-width: 768px) 70vw, (max-width: 1024px) 48vw, 40vw'
+        }
       />
       <div className="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
     </div>
@@ -221,7 +224,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                   priority={index === 0}
                   fetchPriority={index === 0 ? 'high' : undefined}
                   quality={65}
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1200px"
+                  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 90vw, (max-width: 1400px) 85vw, 1200px"
                 />
                 {/* Dark overlay on hover */}
                 <div
@@ -350,7 +353,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                       fill
                       className="object-cover transition-transform duration-[1200ms] ease-[0.25,0.46,0.45,0.94] group-hover:scale-[1.04]"
                       quality={70}
-                      sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 60vw"
+                      sizes="(max-width: 640px) 82vw, (max-width: 768px) 75vw, (max-width: 1024px) 58vw, 52vw"
                     />
                     <div className="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   </div>

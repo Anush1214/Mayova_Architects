@@ -104,6 +104,7 @@ export default function ProjectReveal({ project, index }: ProjectRevealProps) {
                     className="w-full h-[50vh] lg:h-[65vh] object-cover"
                     loading="lazy"
                     quality={85}
+                    sizes="(max-width: 1024px) 100vw, 58vw"
                   />
                 </m.div>
               </div>
