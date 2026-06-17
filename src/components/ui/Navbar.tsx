@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Project, getProjects } from '@/data/projects';
 
@@ -14,13 +14,70 @@ const navLinks = [
   { label: 'Contact', href: '#contact' },
 ];
 
+/**
+ * Compute perceived luminance (0 = black, 1 = white) from RGB values.
+ * Uses the standard BT.601 formula for human-perceived brightness.
+ */
+function luminance(r: number, g: number, b: number): number {
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+/**
+ * Try to read the actual pixel color from an <img> element at a given viewport position.
+ * Falls back to null if the image is cross-origin or not yet loaded.
+ */
+function sampleImagePixel(img: HTMLImageElement, viewX: number, viewY: number): number | null {
+  try {
+    if (!img.complete || img.naturalWidth === 0) return null;
+    const rect = img.getBoundingClientRect();
+    // Map viewport coordinates to the natural image coordinates
+    const imgX = ((viewX - rect.left) / rect.width) * img.naturalWidth;
+    const imgY = ((viewY - rect.top) / rect.height) * img.naturalHeight;
+    if (imgX < 0 || imgY < 0 || imgX >= img.naturalWidth || imgY >= img.naturalHeight) return null;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    ctx.drawImage(img, imgX, imgY, 1, 1, 0, 0, 1, 1);
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+    return luminance(r, g, b);
+  } catch {
+    // Cross-origin images will throw — assume dark for portfolio images
+    return 0.2;
+  }
+}
+
+/**
+ * Walk up the DOM from an element to find the first ancestor with a non-transparent
+ * background-color and return its luminance, or null if none found.
+ */
+function getElementBgLuminance(el: Element): number | null {
+  let node: Element | null = el;
+  while (node && node !== document.documentElement) {
+    const bg = window.getComputedStyle(node).backgroundColor;
+    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+      const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) return luminance(+match[1], +match[2], +match[3]);
+      break;
+    }
+    node = node.parentElement;
+  }
+  return null;
+}
+
 export default function Navbar() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDarkBg, setIsDarkBg] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const rafId = useRef<number>(0);
+  const isDarkRef = useRef(false);
 
   // Close search on click outside or Escape key
   useEffect(() => {
@@ -84,18 +141,99 @@ export default function Navbar() {
     }
   };
 
+  // ── Background luminance detection ───────────────────────────────────────
+  // Samples actual pixels behind the navbar (images + CSS backgrounds)
+  // to dynamically switch between light and dark text.
+  const detectBackground = useCallback(() => {
+    if (rafId.current) return;
+    rafId.current = requestAnimationFrame(() => {
+      const header = headerRef.current;
+      if (!header) { rafId.current = 0; return; }
 
+      // Temporarily hide the header so elementFromPoint sees what's behind it
+      header.style.visibility = 'hidden';
+
+      const y = 28; // vertical center of the navbar
+      const sampleXPositions = [
+        window.innerWidth * 0.5,   // center
+        window.innerWidth * 0.75,  // right side (where nav links are)
+        window.innerWidth * 0.9,   // far right
+      ];
+
+      let darkCount = 0;
+      let totalSampled = 0;
+
+      for (const x of sampleXPositions) {
+        const el = document.elementFromPoint(x, y);
+        if (!el) continue;
+        totalSampled++;
+
+        // If we hit an <img>, sample its actual pixel color
+        const img = el.tagName === 'IMG' ? el as HTMLImageElement : el.querySelector('img');
+        if (img) {
+          const lum = sampleImagePixel(img, x, y);
+          if (lum !== null) {
+            if (lum < 0.45) darkCount++;
+            continue;
+          }
+          // If pixel sampling failed, assume dark for portfolio images
+          darkCount++;
+          continue;
+        }
+
+        // For <canvas> or <video> elements, assume dark
+        if (el.tagName === 'CANVAS' || el.tagName === 'VIDEO') {
+          darkCount++;
+          continue;
+        }
+
+        // Otherwise check CSS background-color up the DOM chain
+        const bgLum = getElementBgLuminance(el);
+        if (bgLum !== null) {
+          if (bgLum < 0.45) darkCount++;
+        }
+        // If no background found, the body cream (#FAF7F2) is light → not dark
+      }
+
+      header.style.visibility = '';
+
+      const nowDark = totalSampled > 0 && darkCount > totalSampled / 2;
+      if (nowDark !== isDarkRef.current) {
+        isDarkRef.current = nowDark;
+        setIsDarkBg(nowDark);
+      }
+
+      rafId.current = 0;
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', detectBackground, { passive: true });
+    window.addEventListener('resize', detectBackground, { passive: true });
+    // Initial check after page has rendered (after loading animations)
+    const timer = setTimeout(detectBackground, 200);
+    return () => {
+      window.removeEventListener('scroll', detectBackground);
+      window.removeEventListener('resize', detectBackground);
+      clearTimeout(timer);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, [detectBackground]);
 
   if (pathname.startsWith('/studio')) return null;
 
-  // Always use cream/white text with text-shadow for readability over any background
-  const textColorClass = 'text-cream';
-  const textHoverClass = 'group-hover:text-white hover:text-white';
-  const navTextShadow = '0 1px 4px rgba(0,0,0,0.5), 0 0 12px rgba(0,0,0,0.3)';
+  // Dynamic text color based on background luminance
+  const textColorClass = isDarkBg ? 'text-cream' : 'text-charcoal';
+  const textHoverClass = isDarkBg
+    ? 'group-hover:text-white hover:text-white'
+    : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';
+  // Subtle text shadow only on dark backgrounds for extra crispness
+  const navTextShadow = isDarkBg ? '0 1px 3px rgba(0,0,0,0.5)' : 'none';
 
   return (
     <LazyMotion features={domAnimation}>
     <m.header
+      ref={headerRef}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 3 }}
@@ -111,11 +249,14 @@ export default function Navbar() {
           alt="MAYOVA Architects"
           width={32}
           height={48}
-          className="object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]"
+          className={`object-contain transition-transform duration-500 group-hover:scale-105 ${isDarkBg ? 'drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]' : ''}`}
           quality={75}
           sizes="32px"
         />
-        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`} style={{ textShadow: navTextShadow }}>
+        <span
+          className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}
+          style={{ textShadow: navTextShadow }}
+        >
           MAYOVA
         </span>
       </Link>

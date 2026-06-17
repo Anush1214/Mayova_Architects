@@ -52,34 +52,96 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
     }
   };
 
-  // Check scroll position for footer — throttled via rAF
+  // ── Background luminance detection for mobile controls ──
+  // Samples pixels behind the top-right area (where hamburger + search sit)
   const rafId = useRef<number>(0);
   const isDarkRef = useRef(false);
 
-  const handleScroll = useCallback(() => {
+  const detectBackground = useCallback(() => {
     if (rafId.current) return;
     rafId.current = requestAnimationFrame(() => {
+      const y = 32; // vertical center of mobile buttons
+      const x = window.innerWidth - 48; // approximate position of hamburger
+
+      // Check what's behind the mobile buttons
+      // Hide the buttons temporarily by checking elements at their position
+      const els = document.elementsFromPoint(x, y);
+      let isDark = false;
+
+      for (const el of els) {
+        // Skip the sidebar's own elements
+        if (el.closest('[aria-label="Toggle menu"]') || el.closest('[aria-label="Toggle mobile search"]')) continue;
+
+        // Check images
+        if (el.tagName === 'IMG') {
+          try {
+            const img = el as HTMLImageElement;
+            if (img.complete && img.naturalWidth > 0) {
+              const canvas = document.createElement('canvas');
+              canvas.width = 1;
+              canvas.height = 1;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                const rect = img.getBoundingClientRect();
+                const imgX = ((x - rect.left) / rect.width) * img.naturalWidth;
+                const imgY = ((y - rect.top) / rect.height) * img.naturalHeight;
+                ctx.drawImage(img, imgX, imgY, 1, 1, 0, 0, 1, 1);
+                const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+                isDark = (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.45;
+                break;
+              }
+            }
+          } catch {
+            isDark = true;
+            break;
+          }
+          isDark = true;
+          break;
+        }
+
+        if (el.tagName === 'CANVAS' || el.tagName === 'VIDEO') {
+          isDark = true;
+          break;
+        }
+
+        // Check CSS background
+        const bg = window.getComputedStyle(el).backgroundColor;
+        if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+          const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+          if (match) {
+            isDark = (0.299 * +match[1] + 0.587 * +match[2] + 0.114 * +match[3]) / 255 < 0.45;
+          }
+          break;
+        }
+      }
+
+      // Also check footer proximity (last 400px)
       const scrollY = window.scrollY;
       const docHeight = document.documentElement.scrollHeight;
       const winHeight = window.innerHeight;
-      const nowDark = docHeight - (scrollY + winHeight) < 400;
+      if (docHeight - (scrollY + winHeight) < 400) {
+        isDark = true;
+      }
 
-      if (nowDark !== isDarkRef.current) {
-        isDarkRef.current = nowDark;
-        setIsDarkBg(nowDark);
+      if (isDark !== isDarkRef.current) {
+        isDarkRef.current = isDark;
+        setIsDarkBg(isDark);
       }
       rafId.current = 0;
     });
   }, []);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    window.addEventListener('scroll', detectBackground, { passive: true });
+    window.addEventListener('resize', detectBackground, { passive: true });
+    const timer = setTimeout(detectBackground, 200);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', detectBackground);
+      window.removeEventListener('resize', detectBackground);
+      clearTimeout(timer);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, [handleScroll]);
+  }, [detectBackground]);
 
   // Close mobile search on click outside or Escape key
   const searchMobileRef = useRef<HTMLDivElement>(null);
