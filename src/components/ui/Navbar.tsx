@@ -14,70 +14,48 @@ const navLinks = [
   { label: 'Contact', href: '#contact' },
 ];
 
-/**
- * Compute perceived luminance (0 = black, 1 = white) from RGB values.
- * Uses the standard BT.601 formula for human-perceived brightness.
- */
-function luminance(r: number, g: number, b: number): number {
-  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-}
-
-/**
- * Try to read the actual pixel color from an <img> element at a given viewport position.
- * Falls back to null if the image is cross-origin or not yet loaded.
- */
-function sampleImagePixel(img: HTMLImageElement, viewX: number, viewY: number): number | null {
-  try {
-    if (!img.complete || img.naturalWidth === 0) return null;
-    const rect = img.getBoundingClientRect();
-    // Map viewport coordinates to the natural image coordinates
-    const imgX = ((viewX - rect.left) / rect.width) * img.naturalWidth;
-    const imgY = ((viewY - rect.top) / rect.height) * img.naturalHeight;
-    if (imgX < 0 || imgY < 0 || imgX >= img.naturalWidth || imgY >= img.naturalHeight) return null;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = 1;
-    canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
-    ctx.drawImage(img, imgX, imgY, 1, 1, 0, 0, 1, 1);
-    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-    return luminance(r, g, b);
-  } catch {
-    // Cross-origin images will throw — assume dark for portfolio images
-    return 0.2;
-  }
-}
-
-/**
- * Walk up the DOM from an element to find the first ancestor with a non-transparent
- * background-color and return its luminance, or null if none found.
- */
-function getElementBgLuminance(el: Element): number | null {
-  let node: Element | null = el;
-  while (node && node !== document.documentElement) {
-    const bg = window.getComputedStyle(node).backgroundColor;
-    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
-      const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (match) return luminance(+match[1], +match[2], +match[3]);
-      break;
-    }
-    node = node.parentElement;
-  }
-  return null;
-}
+// How many px past the hero before auto-hide kicks in
+const HERO_THRESHOLD = 800;
+// How long (ms) of inactivity before the navbar auto-hides
+const HIDE_DELAY = 2000;
 
 export default function Navbar() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDarkBg, setIsDarkBg] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-  const searchRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLElement>(null);
   const rafId = useRef<number>(0);
   const isDarkRef = useRef(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pastHeroRef = useRef(false);
+  const isVisibleRef = useRef(true);
+
+  // ── Auto-hide logic: show on interaction, hide after inactivity past hero ──
+  const showNavbar = useCallback(() => {
+    // Always show on interaction
+    if (!isVisibleRef.current) {
+      isVisibleRef.current = true;
+      setIsNavVisible(true);
+    }
+
+    // Clear any pending hide timer
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+
+    // If we're past the hero, start the auto-hide timer
+    if (pastHeroRef.current) {
+      hideTimerRef.current = setTimeout(() => {
+        isVisibleRef.current = false;
+        setIsNavVisible(false);
+      }, HIDE_DELAY);
+    }
+  }, []);
 
   // Close search on click outside or Escape key
   useEffect(() => {
@@ -141,103 +119,91 @@ export default function Navbar() {
     }
   };
 
-  // ── Background luminance detection ───────────────────────────────────────
-  // Samples actual pixels behind the navbar (images + CSS backgrounds)
-  // to dynamically switch between light and dark text.
-  const detectBackground = useCallback(() => {
+  // Throttled scroll handler using rAF — handles both isDarkBg + auto-hide
+  const handleScroll = useCallback(() => {
     if (rafId.current) return;
     rafId.current = requestAnimationFrame(() => {
-      const header = headerRef.current;
-      if (!header) { rafId.current = 0; return; }
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      const winHeight = window.innerHeight;
 
-      // Temporarily hide the header so elementFromPoint sees what's behind it
-      header.style.visibility = 'hidden';
-
-      const y = 28; // vertical center of the navbar
-      const sampleXPositions = [
-        window.innerWidth * 0.5,   // center
-        window.innerWidth * 0.75,  // right side (where nav links are)
-        window.innerWidth * 0.9,   // far right
-      ];
-
-      let darkCount = 0;
-      let totalSampled = 0;
-
-      for (const x of sampleXPositions) {
-        const el = document.elementFromPoint(x, y);
-        if (!el) continue;
-        totalSampled++;
-
-        // If we hit an <img>, sample its actual pixel color
-        const img = el.tagName === 'IMG' ? el as HTMLImageElement : el.querySelector('img');
-        if (img) {
-          const lum = sampleImagePixel(img, x, y);
-          if (lum !== null) {
-            if (lum < 0.45) darkCount++;
-            continue;
-          }
-          // If pixel sampling failed, assume dark for portfolio images
-          darkCount++;
-          continue;
-        }
-
-        // For <canvas> or <video> elements, assume dark
-        if (el.tagName === 'CANVAS' || el.tagName === 'VIDEO') {
-          darkCount++;
-          continue;
-        }
-
-        // Otherwise check CSS background-color up the DOM chain
-        const bgLum = getElementBgLuminance(el);
-        if (bgLum !== null) {
-          if (bgLum < 0.45) darkCount++;
-        }
-        // If no background found, the body cream (#FAF7F2) is light → not dark
-      }
-
-      header.style.visibility = '';
-
-      const nowDark = totalSampled > 0 && darkCount > totalSampled / 2;
+      // Footer dark-bg detection
+      const nowDark = docHeight - (scrollY + winHeight) < 400;
       if (nowDark !== isDarkRef.current) {
         isDarkRef.current = nowDark;
         setIsDarkBg(nowDark);
       }
 
+      // Track whether we're past the hero
+      const wasPastHero = pastHeroRef.current;
+      pastHeroRef.current = scrollY > HERO_THRESHOLD;
+
+      // If we just entered the gallery zone, start the hide timer
+      if (!wasPastHero && pastHeroRef.current) {
+        showNavbar(); // This starts the hide timer
+      }
+
+      // If we scrolled back into the hero zone, always show
+      if (wasPastHero && !pastHeroRef.current) {
+        if (hideTimerRef.current) {
+          clearTimeout(hideTimerRef.current);
+          hideTimerRef.current = null;
+        }
+        if (!isVisibleRef.current) {
+          isVisibleRef.current = true;
+          setIsNavVisible(true);
+        }
+      }
+
+      // If we're past hero and scrolling, show navbar (timer resets)
+      if (pastHeroRef.current) {
+        showNavbar();
+      }
+
       rafId.current = 0;
     });
-  }, []);
+  }, [showNavbar]);
 
   useEffect(() => {
-    window.addEventListener('scroll', detectBackground, { passive: true });
-    window.addEventListener('resize', detectBackground, { passive: true });
-    // Initial check after page has rendered (after loading animations)
-    const timer = setTimeout(detectBackground, 200);
-    return () => {
-      window.removeEventListener('scroll', detectBackground);
-      window.removeEventListener('resize', detectBackground);
-      clearTimeout(timer);
-      if (rafId.current) cancelAnimationFrame(rafId.current);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    // Mouse movement also reveals the navbar
+    const handleMouseMove = () => {
+      if (pastHeroRef.current) {
+        showNavbar();
+      }
     };
-  }, [detectBackground]);
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, [handleScroll, showNavbar]);
 
   if (pathname.startsWith('/studio')) return null;
 
-  // Dynamic text color based on background luminance
   const textColorClass = isDarkBg ? 'text-cream' : 'text-charcoal';
-  const textHoverClass = isDarkBg
-    ? 'group-hover:text-white hover:text-white'
-    : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';
-  // Subtle text shadow only on dark backgrounds for extra crispness
-  const navTextShadow = isDarkBg ? '0 1px 3px rgba(0,0,0,0.5)' : 'none';
+  const textHoverClass = isDarkBg ? 'group-hover:text-white hover:text-white' : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';
 
   return (
     <LazyMotion features={domAnimation}>
     <m.header
-      ref={headerRef}
       initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: 3 }}
+      animate={{
+        opacity: isNavVisible ? 1 : 0,
+        y: isNavVisible ? 0 : -20,
+      }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-4 pointer-events-none transition-colors duration-500"
+      style={{
+        // Disable pointer events when hidden so it doesn't block clicks
+        pointerEvents: isNavVisible ? undefined : 'none',
+      }}
     >
       {/* Left: Logo → Home */}
       <Link
@@ -253,10 +219,7 @@ export default function Navbar() {
           quality={75}
           sizes="32px"
         />
-        <span
-          className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}
-          style={{ textShadow: navTextShadow }}
-        >
+        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}>
           MAYOVA
         </span>
       </Link>
@@ -268,7 +231,6 @@ export default function Navbar() {
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
-            style={{ textShadow: navTextShadow }}
           >
             <span className="inline-block transition-transform duration-500 group-hover:scale-110">
               {isSearchOpen ? 'Close Search' : 'Quick Search'}
@@ -322,7 +284,6 @@ export default function Navbar() {
             href={link.href}
             onClick={(e) => handleClick(e, link.href)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
-            style={{ textShadow: navTextShadow }}
           >
             <span className="inline-block transition-transform duration-500 group-hover:scale-110">
               {link.label}
