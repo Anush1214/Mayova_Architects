@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
-    qualities: [40, 50, 65, 70, 75],
+    qualities: [20, 30, 40, 50, 55, 65, 70, 75],
     deviceSizes: [320, 480, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000, // 1 year — images from Sanity are immutable

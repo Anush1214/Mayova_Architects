@@ -168,18 +168,23 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
-    // Mouse movement also reveals the navbar
+    // Mouse movement also reveals the navbar (desktop only)
+    const isFinePointer = window.matchMedia('(pointer: fine)').matches;
     const handleMouseMove = () => {
       if (pastHeroRef.current) {
         showNavbar();
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    if (isFinePointer) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
+      if (isFinePointer) {
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
       if (rafId.current) cancelAnimationFrame(rafId.current);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     };

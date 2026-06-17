@@ -1,12 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
 import Sidebar from '@/components/ui/Sidebar';
-import { categoryProjects } from '@/data/siteData';
+import { Project } from '@/data/projects';
 
 const allCategories = [
   { key: 'interior', label: 'Interior' },
@@ -15,8 +16,19 @@ const allCategories = [
   { key: 'landscape', label: 'Landscape' },
 ];
 
-export default function CategoryPage({ category }: { category: string }) {
-  const projects = categoryProjects[category] || [];
+export default function CategoryPage({ 
+  category, 
+  initialProjects = [] 
+}: { 
+  category: string; 
+  initialProjects?: Project[];
+}) {
+  const projects = useMemo(() => {
+    return initialProjects.filter(
+      (p) => p.category.toLowerCase() === category.toLowerCase()
+    );
+  }, [initialProjects, category]);
+
   const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
 
   return (
@@ -78,9 +90,7 @@ export default function CategoryPage({ category }: { category: string }) {
                   className="group"
                 >
                   <div
-                    className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center ${
-                      i % 2 !== 0 ? '' : ''
-                    }`}
+                    className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center`}
                   >
                     {/* Image — takes up most of the width */}
                     <div
@@ -90,13 +100,14 @@ export default function CategoryPage({ category }: { category: string }) {
                           : 'lg:col-span-8 lg:order-2'
                       }`}
                     >
-                      <div className="overflow-hidden cursor-pointer">
+                      <div className="overflow-hidden cursor-pointer relative h-[300px] sm:h-[400px] lg:h-[500px]">
                         <Image
-                          src={project.imagePath}
+                          src={project.coverImage}
                           alt={project.title}
-                          width={1200}
-                          height={700}
-                          className="w-full h-[400px] lg:h-[500px] object-cover transition-transform duration-1000 group-hover:scale-105"
+                          fill
+                          sizes="(max-width: 768px) 90vw, 66vw"
+                          quality={55}
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                           loading="lazy"
                         />
                       </div>
@@ -111,7 +122,7 @@ export default function CategoryPage({ category }: { category: string }) {
                       } flex flex-col justify-center`}
                     >
                       <p className="font-sans text-[9px] tracking-ultra-wide uppercase text-warm-gold mb-4">
-                        {categoryTitle} &mdash; {project.year}
+                        {project.category} &mdash; {project.year}
                       </p>
                       <h3 className="font-serif text-3xl text-charcoal mb-3 leading-tight">
                         {project.title}

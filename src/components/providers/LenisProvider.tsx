@@ -13,6 +13,10 @@ export default function LenisProvider({
   children: React.ReactNode;
 }) {
   useEffect(() => {
+    // Skip Lenis smooth scroll on mobile for better performance and native feel
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) return;
+
     const lenis = new Lenis({
       autoRaf: false,
       lerp: 0.08,

@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import CategoryPage from './CategoryPage';
+import { getProjects } from '@/data/projects';
 import { categoryProjects } from '@/data/siteData';
 
 interface Props {
   params: Promise<{ category: string }>;
 }
+
+export const revalidate = 3600; // Cache for an hour, matching other pages
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
@@ -21,5 +24,6 @@ export function generateStaticParams() {
 
 export default async function Page({ params }: Props) {
   const { category } = await params;
-  return <CategoryPage category={category} />;
+  const projects = await getProjects();
+  return <CategoryPage category={category} initialProjects={projects} />;
 }
