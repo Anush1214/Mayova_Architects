@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Project, getProjects } from '@/data/projects';
 
@@ -18,11 +18,8 @@ export default function Navbar() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isDarkBg, setIsDarkBg] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const rafId = useRef<number>(0);
-  const isDarkRef = useRef(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Close search on click outside or Escape key
@@ -87,36 +84,14 @@ export default function Navbar() {
     }
   };
 
-  // Throttled scroll handler using rAF — fires at most once per frame
-  const handleScroll = useCallback(() => {
-    if (rafId.current) return;
-    rafId.current = requestAnimationFrame(() => {
-      const scrollY = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight;
-      const winHeight = window.innerHeight;
-      const nowDark = docHeight - (scrollY + winHeight) < 400;
-      
-      if (nowDark !== isDarkRef.current) {
-        isDarkRef.current = nowDark;
-        setIsDarkBg(nowDark);
-      }
-      rafId.current = 0;
-    });
-  }, []);
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafId.current) cancelAnimationFrame(rafId.current);
-    };
-  }, [handleScroll]);
 
   if (pathname.startsWith('/studio')) return null;
 
-  const textColorClass = isDarkBg ? 'text-cream' : 'text-charcoal';
-  const textHoverClass = isDarkBg ? 'group-hover:text-white hover:text-white' : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';
+  // Always use cream/white text with text-shadow for readability over any background
+  const textColorClass = 'text-cream';
+  const textHoverClass = 'group-hover:text-white hover:text-white';
+  const navTextShadow = '0 1px 4px rgba(0,0,0,0.5), 0 0 12px rgba(0,0,0,0.3)';
 
   return (
     <LazyMotion features={domAnimation}>
@@ -136,11 +111,11 @@ export default function Navbar() {
           alt="MAYOVA Architects"
           width={32}
           height={48}
-          className={`object-contain transition-transform duration-500 group-hover:scale-105 ${isDarkBg ? 'drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]' : ''}`}
+          className="object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]"
           quality={75}
           sizes="32px"
         />
-        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}>
+        <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`} style={{ textShadow: navTextShadow }}>
           MAYOVA
         </span>
       </Link>
@@ -152,6 +127,7 @@ export default function Navbar() {
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
+            style={{ textShadow: navTextShadow }}
           >
             <span className="inline-block transition-transform duration-500 group-hover:scale-110">
               {isSearchOpen ? 'Close Search' : 'Quick Search'}
@@ -205,6 +181,7 @@ export default function Navbar() {
             href={link.href}
             onClick={(e) => handleClick(e, link.href)}
             className={`nav-link group px-4 py-2 font-sans text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 opacity-80 ${textColorClass} hover:opacity-100`}
+            style={{ textShadow: navTextShadow }}
           >
             <span className="inline-block transition-transform duration-500 group-hover:scale-110">
               {link.label}
