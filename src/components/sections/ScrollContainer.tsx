@@ -10,6 +10,10 @@ import { Project } from '@/data/projects';
    ═══════════════════════════════════════════════════════════════════════════════ */
 const EASE = [0.22, 1, 0.36, 1] as const; // expo-out — ultra smooth
 
+// Auto-slideshow constants (module-level to avoid re-creation & lint deps)
+const AUTO_SCROLL_SPEED = 55; // px/s — leisurely pace
+const RESUME_DELAY = 6000; // ms — resume after 6s of no interaction
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    Description Card (left panel in the expanded strip)
    ═══════════════════════════════════════════════════════════════════════════════ */
@@ -81,11 +85,20 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
 
   const expandedContainerRef = useRef<HTMLDivElement>(null);
 
-  // ── Scroll tracking for arrows ──
+  // ── Auto-slideshow state ──
+  const [autoPlay, setAutoPlay] = useState(true);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const autoPlayPausedByUser = useRef(false);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const isUserInteracting = useRef(false);
+
+  // ── Scroll tracking for arrows + progress ──
   useEffect(() => {
     if (!isExpanded) {
       setShowLeftArrow(false);
       setShowRightArrow(false);
+      setScrollProgress(0);
       return;
     }
     const el = scrollRef.current;
@@ -94,6 +107,9 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     const handleScroll = () => {
       setShowLeftArrow(el.scrollLeft > 30);
       setShowRightArrow(el.scrollLeft < el.scrollWidth - el.clientWidth - 30);
+      // Update scroll progress (0 to 1)
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      setScrollProgress(maxScroll > 0 ? el.scrollLeft / maxScroll : 0);
     };
 
     el.addEventListener('scroll', handleScroll, { passive: true });
@@ -105,6 +121,129 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     };
   }, [isExpanded]);
 
+  // ── Auto-slideshow engine (requestAnimationFrame for 60fps smooth scroll) ──
+  useEffect(() => {
+    if (!isExpanded || !autoPlay) {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      return;
+    }
+
+    let lastTime: number | null = null;
+
+    const tick = (now: number) => {
+      const el = scrollRef.current;
+      if (!el) return;
+
+      if (lastTime !== null && !isUserInteracting.current) {
+        const delta = (now - lastTime) / 1000; // seconds
+        const px = AUTO_SCROLL_SPEED * delta;
+        const maxScroll = el.scrollWidth - el.clientWidth;
+
+        if (el.scrollLeft >= maxScroll - 1) {
+          // Reached the end — loop back to start after a brief pause
+          el.scrollTo({ left: 0, behavior: 'smooth' });
+          lastTime = null;
+          // Pause briefly at start before resuming
+          setTimeout(() => { lastTime = performance.now(); }, 2000);
+          rafRef.current = requestAnimationFrame(tick);
+          return;
+        }
+
+        el.scrollLeft += px;
+      }
+
+      lastTime = now;
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    // Small delay before starting auto-scroll so expand animation finishes
+    const startDelay = setTimeout(() => {
+      rafRef.current = requestAnimationFrame(tick);
+    }, 1200);
+
+    return () => {
+      clearTimeout(startDelay);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isExpanded, autoPlay]);
+
+  // ── Pause/resume on user interaction ──
+  const pauseAutoScroll = useCallback(() => {
+    isUserInteracting.current = true;
+    // Clear any pending resume timer
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    // Schedule resume after inactivity (only if user hasn't manually toggled off)
+    if (!autoPlayPausedByUser.current) {
+      resumeTimerRef.current = setTimeout(() => {
+        isUserInteracting.current = false;
+      }, RESUME_DELAY);
+    }
+  }, []);
+
+  // ── Detect user interaction on the scroll strip ──
+  useEffect(() => {
+    if (!isExpanded) return;
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onInteractionStart = () => pauseAutoScroll();
+    const onInteractionEnd = () => {
+      // After interaction ends, wait RESUME_DELAY then resume
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      if (!autoPlayPausedByUser.current) {
+        resumeTimerRef.current = setTimeout(() => {
+          isUserInteracting.current = false;
+        }, RESUME_DELAY);
+      }
+    };
+
+    // Mouse hover
+    el.addEventListener('mouseenter', onInteractionStart, { passive: true });
+    el.addEventListener('mouseleave', onInteractionEnd, { passive: true });
+    // Touch
+    el.addEventListener('touchstart', onInteractionStart, { passive: true });
+    el.addEventListener('touchend', onInteractionEnd, { passive: true });
+    // Wheel (manual scroll)
+    el.addEventListener('wheel', onInteractionStart, { passive: true });
+
+    return () => {
+      el.removeEventListener('mouseenter', onInteractionStart);
+      el.removeEventListener('mouseleave', onInteractionEnd);
+      el.removeEventListener('touchstart', onInteractionStart);
+      el.removeEventListener('touchend', onInteractionEnd);
+      el.removeEventListener('wheel', onInteractionStart);
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    };
+  }, [isExpanded, pauseAutoScroll]);
+
+  // ── Reset auto-play state when card collapses ──
+  useEffect(() => {
+    if (!isExpanded) {
+      setAutoPlay(true);
+      autoPlayPausedByUser.current = false;
+      isUserInteracting.current = false;
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    }
+  }, [isExpanded]);
+
+  // ── Toggle auto-play (manual control) ──
+  const toggleAutoPlay = useCallback(() => {
+    setAutoPlay(prev => {
+      const next = !prev;
+      autoPlayPausedByUser.current = !next;
+      if (next) isUserInteracting.current = false;
+      return next;
+    });
+  }, []);
+
+  const scrollByFn = useCallback((dir: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = Math.min(window.innerWidth * 0.45, 600);
+    el.scrollBy({ left: dir === 'right' ? amount : -amount, behavior: 'smooth' });
+  }, []);
+
   // ── Keyboard arrow keys for horizontal scroll ──
   useEffect(() => {
     if (!isExpanded) return;
@@ -115,23 +254,18 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
         e.preventDefault();
-        scrollBy('right');
+        pauseAutoScroll();
+        scrollByFn('right');
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        scrollBy('left');
+        pauseAutoScroll();
+        scrollByFn('left');
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isExpanded]);
-
-  const scrollBy = (dir: 'left' | 'right') => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = Math.min(window.innerWidth * 0.45, 600);
-    el.scrollBy({ left: dir === 'right' ? amount : -amount, behavior: 'smooth' });
-  };
+  }, [isExpanded, pauseAutoScroll, scrollByFn]);
 
   return (
     <div
@@ -282,7 +416,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
                     transition={{ duration: 0.25 }}
-                    onClick={() => scrollBy('left')}
+                    onClick={() => { pauseAutoScroll(); scrollByFn('left'); }}
                     className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-cream/85 backdrop-blur-sm border border-stone/10 hover:border-warm-gold/40 active:scale-95 transition-all duration-200 cursor-pointer shadow-lg"
                     aria-label="Scroll left"
                   >
@@ -299,7 +433,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
                     transition={{ duration: 0.25 }}
-                    onClick={() => scrollBy('right')}
+                    onClick={() => { pauseAutoScroll(); scrollByFn('right'); }}
                     className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-cream/85 backdrop-blur-sm border border-stone/10 hover:border-warm-gold/40 active:scale-95 transition-all duration-200 cursor-pointer shadow-lg"
                     aria-label="Scroll right"
                   >
@@ -307,6 +441,29 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                   </m.button>
                 )}
               </AnimatePresence>
+
+              {/* Play / Pause toggle */}
+              <m.button
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.35, ease: EASE }}
+                onClick={toggleAutoPlay}
+                className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-cream/85 backdrop-blur-sm border border-stone/10 hover:border-warm-gold/40 active:scale-90 transition-all duration-200 cursor-pointer shadow-lg group"
+                aria-label={autoPlay ? 'Pause slideshow' : 'Play slideshow'}
+              >
+                {autoPlay ? (
+                  /* Pause icon — two vertical bars */
+                  <svg width="12" height="14" viewBox="0 0 12 14" fill="none" className="text-charcoal group-hover:text-warm-gold transition-colors">
+                    <rect x="1" y="1" width="3.5" height="12" rx="0.8" fill="currentColor" />
+                    <rect x="7.5" y="1" width="3.5" height="12" rx="0.8" fill="currentColor" />
+                  </svg>
+                ) : (
+                  /* Play icon — triangle */
+                  <svg width="12" height="14" viewBox="0 0 12 14" fill="none" className="text-charcoal group-hover:text-warm-gold transition-colors">
+                    <path d="M2 1.5L10.5 7L2 12.5V1.5Z" fill="currentColor" />
+                  </svg>
+                )}
+              </m.button>
 
               {/* Close button */}
               <m.button
@@ -320,14 +477,28 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                 <span className="text-charcoal group-hover:text-warm-gold transition-colors text-xs sm:text-sm">✕</span>
               </m.button>
 
+              {/* Scroll progress bar */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 w-[min(60%,320px)]">
+                <m.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.4, ease: EASE }}
+                  className="h-[3px] rounded-full bg-charcoal/10 overflow-hidden backdrop-blur-sm"
+                >
+                  <div
+                    className="h-full rounded-full bg-warm-gold/70 transition-[width] duration-150 ease-linear"
+                    style={{ width: `${Math.max(2, scrollProgress * 100)}%` }}
+                  />
+                </m.div>
+              </div>
+
               {/* Horizontal scrollable strip */}
               <div
                 ref={scrollRef}
                 className="flex items-stretch gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide overscroll-x-contain"
                 style={{
-                  scrollSnapType: 'x mandatory',
+                  scrollSnapType: 'x proximity',
                   WebkitOverflowScrolling: 'touch',
-                  scrollBehavior: 'smooth',
                 }}
               >
                 {/* Desc card */}
