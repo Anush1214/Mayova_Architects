@@ -11,7 +11,7 @@ import { Project } from '@/data/projects';
 const EASE = [0.22, 1, 0.36, 1] as const; // expo-out — ultra smooth
 
 // Auto-slideshow constants (module-level to avoid re-creation & lint deps)
-const AUTO_SCROLL_SPEED = 55; // px/s — leisurely pace
+const AUTO_SCROLL_SPEED = 120; // px/s — brisk but comfortable pace
 const RESUME_DELAY = 6000; // ms — resume after 6s of no interaction
 
 /* ═══════════════════════════════════════════════════════════════════════════════
