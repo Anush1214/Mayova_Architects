@@ -119,7 +119,7 @@ export default function About() {
                 fill
                 className="object-cover"
                 loading="lazy"
-                quality={60}
+                quality={80}
                 sizes="(max-width: 768px) 90vw, (max-width: 1024px) 70vw, 50vw"
               />
             </m.div>

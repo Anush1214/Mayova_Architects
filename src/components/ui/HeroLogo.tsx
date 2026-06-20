@@ -73,7 +73,6 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 
 export default function HeroLogo({ onReady }: HeroLogoProps) {
   const [ready, setReady] = useState(false);
-  const [isMobile, setIsMobile] = useState(true); // Default to true or false, doesn't matter much before mount
   const containerRef = useRef<HTMLDivElement>(null);
   const shapeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const textRef = useRef<HTMLDivElement>(null);
@@ -86,11 +85,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
   }, [onReady]);
 
   useIsomorphicLayoutEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
     setReady(true);
-    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Assembly animation — letters scatter in from random positions to form the grid
@@ -103,7 +98,8 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
       const servicesEl = servicesRef.current;
       if (shapes.length === 0) return;
 
-      const SCATTERED = getScattered(isMobile);
+      const mobile = window.innerWidth < 768;
+      const SCATTERED = getScattered(mobile);
 
       // Set scattered starting positions IMMEDIATELY before paint
       shapes.forEach((el, i) => {
@@ -161,7 +157,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
     });
 
     return () => ctx.revert();
-  }, [ready, isMobile]);
+  }, [ready]);
 
   // Scroll scatter — letters fly away as user scrolls down
   useIsomorphicLayoutEffect(() => {
@@ -179,7 +175,8 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
           const shapes = shapeRefs.current.filter(Boolean) as HTMLDivElement[];
           const textEl = textRef.current;
           const servicesEl = servicesRef.current;
-          const SCATTER_OUT = getScatterOut(isMobile);
+          const mobile = window.innerWidth < 768;
+          const SCATTER_OUT = getScatterOut(mobile);
 
           const tl = gsap.timeline({
             scrollTrigger: {
@@ -215,10 +212,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
     }, 200);
 
     return () => { clearInterval(check); if (ctx) ctx.revert(); };
-  }, [ready, isMobile]);
-
-  const cell = isMobile ? 75 : 130;
-  const gap = isMobile ? 5 : 8;
+  }, [ready]);
 
   return (
     <div
@@ -228,8 +222,11 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
     >
       {/* Logo Grid — 6 individual characters */}
       <div
-        className="relative"
-        style={{ width: 2 * cell + gap, height: 3 * cell + 2 * gap }}
+        className="relative logo-grid"
+        style={{
+          width: 'calc(2 * var(--cell) + var(--gap))',
+          height: 'calc(3 * var(--cell) + 2 * var(--gap))',
+        } as React.CSSProperties}
       >
         {logoLetters.map((letter, i) => (
           <div
@@ -237,22 +234,20 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
             ref={(el) => { shapeRefs.current[i] = el; }}
             className="absolute will-change-transform opacity-0"
             style={{
-              left: GRID[i].col * (cell + gap),
-              top: GRID[i].row * (cell + gap),
-              width: cell,
-              height: cell,
+              left: `calc(${GRID[i].col} * (var(--cell) + var(--gap)))`,
+              top: `calc(${GRID[i].row} * (var(--cell) + var(--gap)))`,
+              width: 'var(--cell)',
+              height: 'var(--cell)',
             }}
           >
             <Image
               src={letter.src}
               alt={letter.alt}
-              width={cell * 2}
-              height={cell * 2}
+              fill
               className="w-full h-full object-contain"
-              priority={!isMobile && i < 2}
-              loading={isMobile ? (i < 2 ? 'eager' : 'lazy') : 'eager'}
-              quality={isMobile ? 30 : 50}
-              sizes={isMobile ? '75px' : '130px'}
+              priority
+              quality={90}
+              sizes="(max-width: 768px) 75px, 130px"
             />
           </div>
         ))}

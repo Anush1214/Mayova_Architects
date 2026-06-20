@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import LenisProvider from '@/components/providers/LenisProvider';
 import Sidebar from '@/components/ui/Sidebar';
@@ -16,15 +16,7 @@ interface HomeClientProps {
 
 export default function HomeClient({ projects }: HomeClientProps) {
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handle = requestAnimationFrame(() => {
-      setIsMobile(window.innerWidth < 768);
-    });
-    return () => cancelAnimationFrame(handle);
-  }, []);
 
   const handleSceneReady = useCallback(() => {
     setTimeout(() => {
@@ -44,10 +36,9 @@ export default function HomeClient({ projects }: HomeClientProps) {
           alt=""
           fill
           className="object-cover opacity-20"
-          priority={!isMobile}
-          quality={isMobile ? 20 : 40}
+          priority
+          quality={35}
           sizes="100vw"
-          fetchPriority={isMobile ? undefined : 'high'}
         />
         {/* Gradient overlay to soften edges */}
         <div

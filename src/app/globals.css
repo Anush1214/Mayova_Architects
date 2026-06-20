@@ -230,3 +230,16 @@ body {
     cursor: inherit !important;
   }
 }
+
+/* ===== Responsive Logo Grid variables for performance (SSR-safe) ===== */
+.logo-grid {
+  --cell: 130px;
+  --gap: 8px;
+}
+
+@media (max-width: 767px) {
+  .logo-grid {
+    --cell: 75px;
+    --gap: 5px;
+  }
+}

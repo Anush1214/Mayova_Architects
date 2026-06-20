@@ -195,7 +195,7 @@ function ProjectCard({
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           loading={index === 0 ? 'eager' : 'lazy'}
           sizes="(max-width: 768px) 100vw, 50vw"
-          quality={55}
+          quality={80}
         />
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/10 transition-[background-color] duration-500" />

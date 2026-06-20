@@ -106,7 +106,7 @@ export default function CategoryPage({
                           alt={project.title}
                           fill
                           sizes="(max-width: 768px) 90vw, 66vw"
-                          quality={55}
+                          quality={80}
                           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                           loading="lazy"
                         />
