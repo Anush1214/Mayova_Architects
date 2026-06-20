@@ -11,7 +11,7 @@ import { Project } from '@/data/projects';
 const EASE = [0.22, 1, 0.36, 1] as const; // expo-out — ultra smooth
 
 // Auto-slideshow constants (module-level to avoid re-creation & lint deps)
-const AUTO_SCROLL_SPEED = 250; // px/s — clearly visible, smooth movement
+const AUTO_SCROLL_SPEED = 180; // px/s — slightly slower, smooth movement
 const RESUME_DELAY = 5000; // ms — resume after 5s of no interaction
 
 /* ═══════════════════════════════════════════════════════════════════════════════
@@ -92,6 +92,8 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
   const isUserInteracting = useRef(false);
+  const scrollPosRef = useRef(0);
+  const isAutoScrollingRef = useRef(false);
 
   // ── Scroll tracking for arrows + progress ──
   useEffect(() => {
@@ -110,6 +112,11 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
       // Update scroll progress (0 to 1)
       const maxScroll = el.scrollWidth - el.clientWidth;
       setScrollProgress(maxScroll > 0 ? el.scrollLeft / maxScroll : 0);
+
+      // Always sync high-precision scrollPosRef with actual scrollLeft if the scroll didn't originate from auto-scrolling
+      if (!isAutoScrollingRef.current) {
+        scrollPosRef.current = el.scrollLeft;
+      }
     };
 
     el.addEventListener('scroll', handleScroll, { passive: true });
@@ -119,7 +126,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
       el.removeEventListener('scroll', handleScroll);
       clearTimeout(t);
     };
-  }, [isExpanded]);
+  }, [isExpanded, autoPlay]);
 
   // ── Auto-slideshow engine (continuous smooth pixel scroll via rAF) ──
   useEffect(() => {
@@ -132,6 +139,10 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     }
 
     let lastTime: number | null = null;
+    // Set the initial float position to the current scroll position
+    if (scrollRef.current) {
+      scrollPosRef.current = scrollRef.current.scrollLeft;
+    }
 
     const tick = (now: number) => {
       const el = scrollRef.current;
@@ -146,13 +157,19 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
           // Reached the end — pause briefly, then loop back
           el.style.scrollSnapType = 'none';
           el.scrollTo({ left: 0, behavior: 'smooth' });
+          scrollPosRef.current = 0;
           lastTime = null;
           setTimeout(() => { lastTime = performance.now(); }, 2000);
           rafRef.current = requestAnimationFrame(tick);
           return;
         }
 
-        el.scrollLeft += px;
+        // Increment the high-precision float ref
+        scrollPosRef.current += px;
+        // Assign the rounded value to the scrollLeft property safely
+        isAutoScrollingRef.current = true;
+        el.scrollLeft = Math.round(scrollPosRef.current);
+        isAutoScrollingRef.current = false;
       }
 
       lastTime = now;
@@ -163,7 +180,10 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     const startDelay = setTimeout(() => {
       const el = scrollRef.current;
       // Disable snap so it doesn't fight the continuous scroll
-      if (el) el.style.scrollSnapType = 'none';
+      if (el) {
+        el.style.scrollSnapType = 'none';
+        scrollPosRef.current = el.scrollLeft;
+      }
       rafRef.current = requestAnimationFrame(tick);
     }, 800);
 
@@ -315,7 +335,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
         {/* ══════════ IMAGE AREA — morphs in-place ══════════ */}
         <m.div
           layout
-          transition={{ layout: { duration: 0.65, ease: EASE } }}
+          transition={{ layout: { duration: 0.8, ease: EASE } }}
           className={isExpanded ? 'relative' : 'max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12'}
         >
           {/* ── COLLAPSED: single cover image ── */}
@@ -335,9 +355,9 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                 y: isHovered ? -5 : 0,
               }}
               transition={{
-                scale: { duration: 0.5, ease: EASE },
-                y: { duration: 0.5, ease: EASE },
-                layout: { duration: 0.65, ease: EASE },
+                scale: { duration: 0.65, ease: EASE },
+                y: { duration: 0.65, ease: EASE },
+                layout: { duration: 0.8, ease: EASE },
               }}
             >
               {/* Shadow layer (separate for GPU performance) */}
@@ -412,7 +432,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
               layout
               layoutId={`cover-${project.id}`}
               className="relative w-full"
-              transition={{ layout: { duration: 0.65, ease: EASE } }}
+              transition={{ layout: { duration: 0.8, ease: EASE } }}
             >
               {/* Left arrow */}
               <AnimatePresence>
