@@ -11,7 +11,10 @@ export default function CursorLoader() {
 
   useEffect(() => {
     // Only load the cursor on devices with a fine pointer (mouse/trackpad)
-    setIsFinePointer(window.matchMedia('(pointer: fine)').matches);
+    const handle = requestAnimationFrame(() => {
+      setIsFinePointer(window.matchMedia('(pointer: fine)').matches);
+    });
+    return () => cancelAnimationFrame(handle);
   }, []);
 
   if (!isFinePointer) return null;

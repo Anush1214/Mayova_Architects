@@ -68,10 +68,10 @@ interface HeroLogoProps {
   onReady: () => void;
 }
 
-export default function HeroLogo({ onReady }: HeroLogoProps) {
-  // Use useLayoutEffect on client, useEffect on server to avoid Next.js warnings
-  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+// Use useLayoutEffect on client, useEffect on server to avoid Next.js warnings
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
+export default function HeroLogo({ onReady }: HeroLogoProps) {
   const [ready, setReady] = useState(false);
   const [isMobile, setIsMobile] = useState(true); // Default to true or false, doesn't matter much before mount
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,7 +97,7 @@ export default function HeroLogo({ onReady }: HeroLogoProps) {
   useIsomorphicLayoutEffect(() => {
     if (!ready) return;
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const shapes = shapeRefs.current.filter(Boolean) as HTMLDivElement[];
       const textEl = textRef.current;
       const servicesEl = servicesRef.current;

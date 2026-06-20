@@ -95,13 +95,14 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
   const scrollPosRef = useRef(0);
   const isAutoScrollingRef = useRef(false);
 
-  // ── Scroll tracking for arrows + progress ──
   useEffect(() => {
     if (!isExpanded) {
-      setShowLeftArrow(false);
-      setShowRightArrow(false);
-      setScrollProgress(0);
-      return;
+      const handle = requestAnimationFrame(() => {
+        setShowLeftArrow(false);
+        setShowRightArrow(false);
+        setScrollProgress(0);
+      });
+      return () => cancelAnimationFrame(handle);
     }
     const el = scrollRef.current;
     if (!el) return;
@@ -242,14 +243,16 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     };
   }, [isExpanded, pauseAutoScroll]);
 
-  // ── Reset auto-play state when card collapses ──
   useEffect(() => {
     if (!isExpanded) {
-      setAutoPlay(true);
+      const handle = requestAnimationFrame(() => {
+        setAutoPlay(true);
+      });
       autoPlayPausedByUser.current = false;
       isUserInteracting.current = false;
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      return () => cancelAnimationFrame(handle);
     }
   }, [isExpanded]);
 

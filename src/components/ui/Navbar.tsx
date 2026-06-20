@@ -223,6 +223,7 @@ export default function Navbar() {
           className={`object-contain transition-transform duration-500 group-hover:scale-105 ${isDarkBg ? 'drop-shadow-[0_0_8px_rgba(250,247,242,0.5)]' : ''}`}
           quality={75}
           sizes="32px"
+          loading="eager"
         />
         <span className={`inline-block font-serif text-sm tracking-[0.2em] uppercase transition-colors duration-500 opacity-90 ${textColorClass} ${textHoverClass}`}>
           MAYOVA

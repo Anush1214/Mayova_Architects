@@ -20,7 +20,10 @@ export default function HomeClient({ projects }: HomeClientProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+    const handle = requestAnimationFrame(() => {
+      setIsMobile(window.innerWidth < 768);
+    });
+    return () => cancelAnimationFrame(handle);
   }, []);
 
   const handleSceneReady = useCallback(() => {
