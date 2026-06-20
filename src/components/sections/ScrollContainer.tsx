@@ -4,6 +4,7 @@ import { forwardRef, useState, useCallback, useRef, useEffect, memo } from 'reac
 import Image from 'next/image';
 import { LazyMotion, domAnimation, m, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Project } from '@/data/projects';
+import Lightbox from '@/components/ui/Lightbox';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    Shared easing curve — architectural, refined
@@ -47,13 +48,16 @@ function DescCard({ project, index }: { project: Project; index: number }) {
 /* ═══════════════════════════════════════════════════════════════════════════════
    Image Panel (each image in the expanded strip)
    ═══════════════════════════════════════════════════════════════════════════════ */
-function ImgPanel({ src, alt, wide }: { src: string; alt: string; wide?: boolean }) {
+function ImgPanel({ src, alt, wide, onClick }: { src: string; alt: string; wide?: boolean; onClick?: () => void }) {
   return (
-    <div className={`relative flex-shrink-0 ${
-      wide
-        ? 'w-[82vw] sm:w-[75vw] md:w-[58vw] lg:w-[52vw]'
-        : 'w-[78vw] sm:w-[70vw] md:w-[48vw] lg:w-[40vw]'
-    } h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden group interactive`}>
+    <div 
+      onClick={onClick}
+      className={`relative flex-shrink-0 ${
+        wide
+          ? 'w-[82vw] sm:w-[75vw] md:w-[58vw] lg:w-[52vw]'
+          : 'w-[78vw] sm:w-[70vw] md:w-[48vw] lg:w-[40vw]'
+      } h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden group interactive cursor-pointer`}
+    >
       <Image
         src={src}
         alt={alt}
@@ -80,6 +84,28 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Lightbox state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Helper to ensure coverImage is first in the list without duplicates
+  const getProjectImages = useCallback((project: Project) => {
+    const list: string[] = [];
+    if (project.coverImage) {
+      list.push(project.coverImage);
+    }
+    if (project.images) {
+      project.images.forEach((img) => {
+        const baseImg = img.split('?')[0];
+        const baseCover = project.coverImage ? project.coverImage.split('?')[0] : '';
+        if (baseImg !== baseCover) {
+          list.push(img);
+        }
+      });
+    }
+    return list;
+  }, []);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
@@ -550,8 +576,12 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                 <div
                   className="flex-shrink-0"
                   style={{ scrollSnapAlign: 'start' }}
+                  onClick={() => {
+                    setLightboxIndex(0);
+                    setLightboxOpen(true);
+                  }}
                 >
-                  <div className="relative w-[82vw] sm:w-[75vw] md:w-[58vw] lg:w-[52vw] h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden group interactive">
+                  <div className="relative w-[82vw] sm:w-[75vw] md:w-[58vw] lg:w-[52vw] h-[45vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden group interactive cursor-pointer">
                     <Image
                       src={project.coverImage}
                       alt={project.title}
@@ -580,7 +610,15 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                       ease: EASE,
                     }}
                   >
-                    <ImgPanel src={src} alt={`${project.title} ${ii + 1}`} wide={ii === 0} />
+                    <ImgPanel 
+                      src={src} 
+                      alt={`${project.title} ${ii + 1}`} 
+                      wide={ii === 0} 
+                      onClick={() => {
+                        setLightboxIndex(ii + 1);
+                        setLightboxOpen(true);
+                      }}
+                    />
                   </m.div>
                 ))}
               </div>
@@ -617,6 +655,17 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
           </div>
         </div>
       </m.div>
+
+      {/* Lightbox Gallery */}
+      <Lightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        images={getProjectImages(project)}
+        initialIndex={lightboxIndex}
+        title={project.title}
+        category={project.category}
+        year={project.year}
+      />
     </div>
   );
 }

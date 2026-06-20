@@ -7,11 +7,45 @@ import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
 import Sidebar from '@/components/ui/Sidebar';
 import { Project } from '@/data/projects';
+import Lightbox from '@/components/ui/Lightbox';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Projects({ projects }: { projects: Project[] }) {
   const [activeFilter, setActiveFilter] = useState<string>('all');
+
+  // Lightbox state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [initialImageIndex, setInitialImageIndex] = useState(0);
+
+  const handleOpenLightbox = useCallback((project: Project, index: number) => {
+    setSelectedProject(project);
+    setInitialImageIndex(index);
+    setLightboxOpen(true);
+  }, []);
+
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxOpen(false);
+  }, []);
+
+  // Helper to ensure coverImage is first in the list without duplicates
+  const getProjectImages = useCallback((project: Project) => {
+    const list: string[] = [];
+    if (project.coverImage) {
+      list.push(project.coverImage);
+    }
+    if (project.images) {
+      project.images.forEach((img) => {
+        const baseImg = img.split('?')[0];
+        const baseCover = project.coverImage ? project.coverImage.split('?')[0] : '';
+        if (baseImg !== baseCover) {
+          list.push(img);
+        }
+      });
+    }
+    return list;
+  }, []);
 
   // Derive unique categories from actual project data
   const categories = useMemo(() => {
@@ -136,6 +170,7 @@ export default function Projects({ projects }: { projects: Project[] }) {
                           project={project}
                           index={i}
                           delayOffset={groupIndex * 0.1}
+                          onCardClick={() => handleOpenLightbox(project, 0)}
                         />
                       ))}
                     </div>
@@ -157,6 +192,19 @@ export default function Projects({ projects }: { projects: Project[] }) {
 
         <div className="h-20" />
         <Footer />
+
+        {/* Lightbox Gallery */}
+        {selectedProject && (
+          <Lightbox
+            isOpen={lightboxOpen}
+            onClose={handleCloseLightbox}
+            images={getProjectImages(selectedProject)}
+            initialIndex={initialImageIndex}
+            title={selectedProject.title}
+            category={selectedProject.category}
+            year={selectedProject.year}
+          />
+        )}
       </div>
     </LazyMotion>
   );
@@ -169,10 +217,12 @@ function ProjectCard({
   project,
   index,
   delayOffset = 0,
+  onCardClick,
 }: {
   project: Project;
   index: number;
   delayOffset?: number;
+  onCardClick: () => void;
 }) {
   return (
     <m.article
@@ -185,6 +235,7 @@ function ProjectCard({
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       className="group cursor-pointer"
+      onClick={onCardClick}
     >
       {/* Image */}
       <div className="overflow-hidden mb-5 relative aspect-[4/3] md:h-[440px] md:aspect-auto">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -8,6 +8,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
 import Sidebar from '@/components/ui/Sidebar';
 import { Project } from '@/data/projects';
+import Lightbox from '@/components/ui/Lightbox';
 
 const allCategories = [
   { key: 'interior', label: 'Interior' },
@@ -23,6 +24,39 @@ export default function CategoryPage({
   category: string; 
   initialProjects?: Project[];
 }) {
+  // Lightbox state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [initialImageIndex, setInitialImageIndex] = useState(0);
+
+  const handleOpenLightbox = useCallback((project: Project, index: number) => {
+    setSelectedProject(project);
+    setInitialImageIndex(index);
+    setLightboxOpen(true);
+  }, []);
+
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxOpen(false);
+  }, []);
+
+  // Helper to ensure coverImage is first in the list without duplicates
+  const getProjectImages = useCallback((project: Project) => {
+    const list: string[] = [];
+    if (project.coverImage) {
+      list.push(project.coverImage);
+    }
+    if (project.images) {
+      project.images.forEach((img) => {
+        const baseImg = img.split('?')[0];
+        const baseCover = project.coverImage ? project.coverImage.split('?')[0] : '';
+        if (baseImg !== baseCover) {
+          list.push(img);
+        }
+      });
+    }
+    return list;
+  }, []);
+
   const projects = useMemo(() => {
     return initialProjects.filter(
       (p) => p.category.toLowerCase() === category.toLowerCase()
@@ -87,7 +121,8 @@ export default function CategoryPage({
                     delay: i * 0.1,
                     ease: [0.25, 0.46, 0.45, 0.94],
                   }}
-                  className="group"
+                  className="group cursor-pointer"
+                  onClick={() => handleOpenLightbox(project, 0)}
                 >
                   <div
                     className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center`}
@@ -147,6 +182,19 @@ export default function CategoryPage({
 
       <div className="h-20" />
       <Footer />
+
+      {/* Lightbox Gallery */}
+      {selectedProject && (
+        <Lightbox
+          isOpen={lightboxOpen}
+          onClose={handleCloseLightbox}
+          images={getProjectImages(selectedProject)}
+          initialIndex={initialImageIndex}
+          title={selectedProject.title}
+          category={selectedProject.category}
+          year={selectedProject.year}
+        />
+      )}
     </div>
   );
 }
