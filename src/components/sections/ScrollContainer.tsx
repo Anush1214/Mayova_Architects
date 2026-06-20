@@ -155,13 +155,9 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
         const maxScroll = el.scrollWidth - el.clientWidth;
 
         if (el.scrollLeft >= maxScroll - 1) {
-          // Reached the end — pause briefly, then loop back
-          el.style.scrollSnapType = 'none';
-          el.scrollTo({ left: 0, behavior: 'smooth' });
-          scrollPosRef.current = 0;
-          lastTime = null;
-          setTimeout(() => { lastTime = performance.now(); }, 2000);
-          rafRef.current = requestAnimationFrame(tick);
+          // Reached the end — stop sliding at the last image
+          el.scrollLeft = maxScroll;
+          setAutoPlay(false);
           return;
         }
 
@@ -261,7 +257,18 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     setAutoPlay(prev => {
       const next = !prev;
       autoPlayPausedByUser.current = !next;
-      if (next) isUserInteracting.current = false;
+      if (next) {
+        isUserInteracting.current = false;
+        // If we are at the end when user clicks play, start from beginning
+        const el = scrollRef.current;
+        if (el) {
+          const maxScroll = el.scrollWidth - el.clientWidth;
+          if (el.scrollLeft >= maxScroll - 5) {
+            el.scrollLeft = 0;
+            scrollPosRef.current = 0;
+          }
+        }
+      }
       return next;
     });
   }, []);
