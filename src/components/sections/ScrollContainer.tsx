@@ -11,8 +11,8 @@ import { Project } from '@/data/projects';
 const EASE = [0.22, 1, 0.36, 1] as const; // expo-out — ultra smooth
 
 // Auto-slideshow constants (module-level to avoid re-creation & lint deps)
-const AUTO_SCROLL_SPEED = 120; // px/s — brisk but comfortable pace
-const RESUME_DELAY = 6000; // ms — resume after 6s of no interaction
+const SLIDE_INTERVAL = 3000; // ms — time each image is shown before sliding to next
+const RESUME_DELAY = 5000; // ms — resume after 5s of no interaction
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    Description Card (left panel in the expanded strip)
@@ -90,8 +90,9 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
   const [scrollProgress, setScrollProgress] = useState(0);
   const autoPlayPausedByUser = useRef(false);
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const rafRef = useRef<number | null>(null);
+  const slideTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isUserInteracting = useRef(false);
+  const currentSlideRef = useRef(0);
 
   // ── Scroll tracking for arrows + progress ──
   useEffect(() => {
@@ -121,49 +122,47 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
     };
   }, [isExpanded]);
 
-  // ── Auto-slideshow engine (requestAnimationFrame for 60fps smooth scroll) ──
+  // ── Auto-slideshow engine (panel-by-panel, like a traditional slideshow) ──
   useEffect(() => {
     if (!isExpanded || !autoPlay) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (slideTimerRef.current) clearInterval(slideTimerRef.current);
       return;
     }
 
-    let lastTime: number | null = null;
-
-    const tick = (now: number) => {
+    const slideToNext = () => {
       const el = scrollRef.current;
-      if (!el) return;
+      if (!el || isUserInteracting.current) return;
 
-      if (lastTime !== null && !isUserInteracting.current) {
-        const delta = (now - lastTime) / 1000; // seconds
-        const px = AUTO_SCROLL_SPEED * delta;
-        const maxScroll = el.scrollWidth - el.clientWidth;
+      // Get all child panels in the scroll strip
+      const panels = Array.from(el.children) as HTMLElement[];
+      if (panels.length === 0) return;
 
-        if (el.scrollLeft >= maxScroll - 1) {
-          // Reached the end — loop back to start after a brief pause
-          el.scrollTo({ left: 0, behavior: 'smooth' });
-          lastTime = null;
-          // Pause briefly at start before resuming
-          setTimeout(() => { lastTime = performance.now(); }, 2000);
-          rafRef.current = requestAnimationFrame(tick);
-          return;
-        }
+      // Move to next slide
+      currentSlideRef.current += 1;
 
-        el.scrollLeft += px;
+      // If past the last panel, loop back to start
+      if (currentSlideRef.current >= panels.length) {
+        currentSlideRef.current = 0;
       }
 
-      lastTime = now;
-      rafRef.current = requestAnimationFrame(tick);
+      const target = panels[currentSlideRef.current];
+      if (target) {
+        el.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
+      }
     };
 
-    // Small delay before starting auto-scroll so expand animation finishes
+    // Start sliding after a brief delay for the expand animation to finish
     const startDelay = setTimeout(() => {
-      rafRef.current = requestAnimationFrame(tick);
-    }, 1200);
+      // Immediately slide to the first image (skip desc card)
+      currentSlideRef.current = 0;
+      slideToNext();
+      // Then keep sliding at interval
+      slideTimerRef.current = setInterval(slideToNext, SLIDE_INTERVAL);
+    }, 800);
 
     return () => {
       clearTimeout(startDelay);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (slideTimerRef.current) clearInterval(slideTimerRef.current);
     };
   }, [isExpanded, autoPlay]);
 
@@ -222,8 +221,9 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
       setAutoPlay(true);
       autoPlayPausedByUser.current = false;
       isUserInteracting.current = false;
+      currentSlideRef.current = 0;
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (slideTimerRef.current) clearInterval(slideTimerRef.current);
     }
   }, [isExpanded]);
 
@@ -497,7 +497,7 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
                 ref={scrollRef}
                 className="flex items-stretch gap-3 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide overscroll-x-contain"
                 style={{
-                  scrollSnapType: 'x proximity',
+                  scrollSnapType: 'x mandatory',
                   WebkitOverflowScrolling: 'touch',
                 }}
               >
