@@ -117,20 +117,23 @@ export default function CustomCursor() {
       />
 
       {/* ── Dot / hover ring: mix-blend-difference = always readable ── */}
+      {/* Hidden when glass pill is active (hoverTarget) to prevent double-overlap */}
       <m.div
         className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
         style={{
-          backgroundColor: isHovering && !hoverTarget ? 'transparent' : 'rgba(255,255,255,1)',
+          backgroundColor: hoverTarget ? 'transparent' : (isHovering ? 'transparent' : 'rgba(255,255,255,1)'),
           border: isHovering && !hoverTarget ? '1.5px solid rgba(255,255,255,1)' : 'none',
           borderRadius,
         }}
         animate={{
+          opacity: hoverTarget ? 0 : 1,
           x: mousePosition.x - (isHovering && !hoverTarget ? 20 : 6),
           y: mousePosition.y - (isHovering && !hoverTarget ? 20 : 6),
           width: isHovering && !hoverTarget ? 40 : 12,
           height: isHovering && !hoverTarget ? 40 : 12,
         }}
         transition={{
+          opacity: { duration: 0.15 },
           x: { type: 'tween', duration: 0 },
           y: { type: 'tween', duration: 0 },
           width: { type: 'spring', damping: 30, stiffness: 300, mass: 0.5 },
