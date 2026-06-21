@@ -46,11 +46,11 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSearchSelect = (projectTitle: string) => {
+  const handleSearchSelect = (slug: string) => {
     setSearchQuery('');
     setMobileOpen(false);
     setSearchMobileOpen(false);
-    const id = `project-anchor-${projectTitle.replace(/\s+/g, '-').toLowerCase()}`;
+    const id = `project-anchor-${slug}`;
     
     if (pathname === '/') {
       const element = document.getElementById(id);
@@ -196,8 +196,8 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
                 {filteredProjects.length > 0 ? (
                   filteredProjects.map((p) => (
                     <button
-                      key={p.id}
-                      onClick={() => handleSearchSelect(p.title)}
+                      key={p.sanityId}
+                      onClick={() => handleSearchSelect(p.slug)}
                       className={`w-full text-left px-4 py-3 transition-colors border-b last:border-0 ${isDarkBg ? 'hover:bg-cream/10 border-cream/5 text-cream' : 'hover:bg-warm-gold/10 border-stone/5 text-charcoal'}`}
                     >
                       <p className="font-serif text-sm">{p.title}</p>

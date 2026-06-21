@@ -11,9 +11,9 @@ import { Project } from '@/data/projects';
 import Lightbox from '@/components/ui/Lightbox';
 
 const allCategories = [
-  { key: 'interior', label: 'Interior' },
-  { key: 'planning', label: 'Planning' },
   { key: 'architecture', label: 'Architecture' },
+  { key: 'interior', label: 'Interior' },
+  { key: 'commercial', label: 'Commercial' },
   { key: 'landscape', label: 'Landscape' },
 ];
 
@@ -112,7 +112,7 @@ export default function CategoryPage({
             <div className="space-y-20 lg:space-y-28">
               {projects.map((project, i) => (
                 <motion.article
-                  key={project.id}
+                  key={project.sanityId}
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-80px' }}

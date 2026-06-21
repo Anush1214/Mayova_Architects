@@ -114,7 +114,7 @@ export const categoryProjects: Record<string, CategoryProject[]> = {
       imagePath: '/images/projects/project-4.png',
     },
   ],
-  planning: [
+  commercial: [
     {
       id: 1,
       title: 'Urban Development Plan',
@@ -173,5 +173,5 @@ export const siteConfig = {
   social: {
     instagram: 'https://www.instagram.com/mayova_architects',
   },
-  categories: ['Interior', 'Landscape', 'Architecture', 'Product Designing'],
+  categories: ['Architecture', 'Interior', 'Commercial', 'Landscape'],
 };

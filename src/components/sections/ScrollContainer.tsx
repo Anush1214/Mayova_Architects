@@ -331,12 +331,12 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
 
   return (
     <div
-      id={`project-${project.id}`}
+      id={`project-${project.sanityId}`}
       className="relative bg-cream"
     >
       {/* Anchor for sidebar navigation */}
       <div
-        id={`project-anchor-${project.title.replace(/\s+/g, '-').toLowerCase()}`}
+        id={`project-anchor-${project.slug}`}
         className="absolute"
         style={{ transform: 'translateY(-100px)' }}
       />
@@ -674,9 +674,9 @@ function ProjectCard({ project, index, isExpanded, onToggle }: {
    Main ScrollContainer
    ═══════════════════════════════════════════════════════════════════════════════ */
 const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ projects }, ref) => {
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const handleToggle = useCallback((id: number) => {
+  const handleToggle = useCallback((id: string) => {
     setExpandedId(prev => prev === id ? null : id);
   }, []);
 
@@ -686,11 +686,11 @@ const ScrollContainer = forwardRef<HTMLDivElement, { projects: Project[] }>(({ p
         <div ref={ref} className="relative z-20">
           {projects.map((project, i) => (
             <ProjectCard
-              key={project.id}
+              key={project.sanityId}
               project={project}
               index={i}
-              isExpanded={expandedId === project.id}
-              onToggle={() => handleToggle(project.id)}
+              isExpanded={expandedId === project.sanityId}
+              onToggle={() => handleToggle(project.sanityId)}
             />
           ))}
 

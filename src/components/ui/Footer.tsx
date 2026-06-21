@@ -270,7 +270,7 @@ export default function Footer() {
                 className="mt-20 pt-8 border-t border-cream/10"
               >
                 <div className="flex flex-wrap items-center justify-center gap-4 lg:gap-8">
-                  {['Architecture', 'Interior', 'Landscaping', 'Product Designing'].map((service, i) => (
+                  {['Architecture', 'Interior', 'Commercial', 'Landscape'].map((service, i) => (
                     <span key={service} className="flex items-center gap-4 lg:gap-8">
                       <span className="font-sans text-sm lg:text-base text-cream/50 tracking-wider">
                         {service}

@@ -166,7 +166,7 @@ export default function Projects({ projects }: { projects: Project[] }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                       {categoryProjects.map((project, i) => (
                         <ProjectCard
-                          key={project.id}
+                          key={project.sanityId}
                           project={project}
                           index={i}
                           delayOffset={groupIndex * 0.1}

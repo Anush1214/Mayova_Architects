@@ -22,6 +22,7 @@ const cormorant = Cormorant_Garamond({
 
 import Navbar from '@/components/ui/Navbar';
 import CursorLoader from '@/components/ui/CursorLoader';
+import { getProjects } from '@/data/projects';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -57,11 +58,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const projects = await getProjects();
+
   return (
     <html lang="en" className={`h-full antialiased ${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <head>
@@ -71,7 +74,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full grain-overlay font-sans">
         <CursorLoader />
-        <Navbar />
+        <Navbar projects={projects} />
         {children}
         <Analytics />
         <SpeedInsights />

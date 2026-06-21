@@ -60,8 +60,8 @@ function getScatterOut(mobile: boolean) {
 const services = [
   { label: 'Architecture', href: '/projects/architecture' },
   { label: 'Interior', href: '/projects/interior' },
-  { label: 'Landscaping', href: '/projects/landscape' },
-  { label: 'Product Designing', href: '/projects/architecture' },
+  { label: 'Commercial', href: '/projects/commercial' },
+  { label: 'Landscape', href: '/projects/landscape' },
 ];
 
 interface HeroLogoProps {

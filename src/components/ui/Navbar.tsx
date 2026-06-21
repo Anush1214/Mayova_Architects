@@ -19,8 +19,8 @@ const HERO_THRESHOLD = 800;
 // How long (ms) of inactivity before the navbar auto-hides
 const HIDE_DELAY = 2000;
 
-export default function Navbar() {
-  const [allProjects, setAllProjects] = useState<Project[]>([]);
+export default function Navbar({ projects: initialProjects }: { projects?: Project[] } = {}) {
+  const [allProjects, setAllProjects] = useState<Project[]>(initialProjects || []);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDarkBg, setIsDarkBg] = useState(false);
@@ -94,7 +94,7 @@ export default function Navbar() {
     };
   }, [isSearchOpen]);
 
-  // Lazy-load projects only when search is opened (not on mount)
+  // Lazy-load projects only when search is opened AND no server-provided data
   useEffect(() => {
     if (isSearchOpen && allProjects.length === 0) {
       getProjects().then(setAllProjects);
@@ -106,10 +106,10 @@ export default function Navbar() {
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSearchSelect = (projectTitle: string) => {
+  const handleSearchSelect = (slug: string) => {
     setSearchQuery('');
     setIsSearchOpen(false);
-    const id = `project-anchor-${projectTitle.replace(/\s+/g, '-').toLowerCase()}`;
+    const id = `project-anchor-${slug}`;
     
     if (pathname === '/') {
       const element = document.getElementById(id);
@@ -276,8 +276,8 @@ export default function Navbar() {
                   {filteredProjects.length > 0 ? (
                     filteredProjects.map((p) => (
                       <button
-                        key={p.id}
-                        onClick={() => handleSearchSelect(p.title)}
+                      key={p.sanityId}
+                        onClick={() => handleSearchSelect(p.slug)}
                         className="w-full text-left px-4 py-3 hover:bg-warm-gold/10 transition-colors border-b border-stone/5 last:border-0"
                       >
                         <p className="font-serif text-charcoal text-sm">{p.title}</p>
