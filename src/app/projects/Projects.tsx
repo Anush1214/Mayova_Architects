@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
-import Sidebar from '@/components/ui/Sidebar';
 import { Project } from '@/data/projects';
 import Lightbox from '@/components/ui/Lightbox';
 
@@ -77,7 +76,6 @@ export default function Projects({ projects }: { projects: Project[] }) {
   return (
     <LazyMotion features={domAnimation}>
       <div className="min-h-screen bg-cream">
-        <Sidebar />
 
         <PageHeader
           title="Projects"

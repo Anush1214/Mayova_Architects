@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
-import Sidebar from '@/components/ui/Sidebar';
 import { Project } from '@/data/projects';
 import Lightbox from '@/components/ui/Lightbox';
 
@@ -67,7 +66,6 @@ export default function CategoryPage({
 
   return (
     <div className="min-h-screen bg-cream">
-      <Sidebar />
 
       <PageHeader
         title={categoryTitle}

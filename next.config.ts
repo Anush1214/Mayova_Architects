@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable strict mode — GSAP timelines don't survive double-mounting
-  reactStrictMode: false,
+  reactStrictMode: true,
 
   // Image optimization
   images: {

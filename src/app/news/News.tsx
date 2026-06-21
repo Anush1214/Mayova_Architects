@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
-import Sidebar from '@/components/ui/Sidebar';
 import { newsItems, NewsItem } from '@/data/siteData';
 
 type TabKey = 'all' | 'news' | 'awards' | 'events';
@@ -27,7 +26,6 @@ export default function News() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <Sidebar />
 
       <PageHeader
         title="News"

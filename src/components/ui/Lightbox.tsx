@@ -164,10 +164,8 @@ export default function Lightbox({
                       src={activeImage}
                       alt={`${title} - image ${currentIndex + 1}`}
                       fill
-                      priority
                       className="object-contain"
                       sizes="90vw"
-                      unoptimized
                     />
                   </div>
                 </motion.div>
@@ -217,7 +215,6 @@ export default function Lightbox({
                       fill
                       className="object-cover"
                       sizes="56px"
-                      unoptimized
                     />
                   </button>
                 ))}

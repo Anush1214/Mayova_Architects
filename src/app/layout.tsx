@@ -21,6 +21,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 import Navbar from '@/components/ui/Navbar';
+import Sidebar from '@/components/ui/Sidebar';
 import CursorLoader from '@/components/ui/CursorLoader';
 import { getProjects } from '@/data/projects';
 
@@ -75,6 +76,7 @@ export default async function RootLayout({
       <body className="min-h-full grain-overlay font-sans">
         <CursorLoader />
         <Navbar projects={projects} />
+        <Sidebar projects={projects} />
         {children}
         <Analytics />
         <SpeedInsights />

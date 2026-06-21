@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
 import PageHeader from '@/components/ui/PageHeader';
 import Footer from '@/components/ui/Footer';
-import Sidebar from '@/components/ui/Sidebar';
 import { teamMembers } from '@/data/siteData';
 
 
@@ -13,7 +12,6 @@ export default function About() {
   return (
     <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-cream">
-      <Sidebar />
 
       <PageHeader
         title="About"

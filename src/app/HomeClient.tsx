@@ -3,7 +3,6 @@
 import { useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import LenisProvider from '@/components/providers/LenisProvider';
-import Sidebar from '@/components/ui/Sidebar';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import HeroLogo from '@/components/ui/HeroLogo';
 import ScrollContainer from '@/components/sections/ScrollContainer';
@@ -27,7 +26,6 @@ export default function HomeClient({ projects }: HomeClientProps) {
   return (
     <LenisProvider>
       <LoadingScreen isLoading={isLoading} />
-      <Sidebar projects={projects} />
 
       {/* Subtle architectural background behind the logo */}
       <div className="fixed inset-0 z-0 pointer-events-none">
