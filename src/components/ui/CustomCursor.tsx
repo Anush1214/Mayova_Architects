@@ -69,6 +69,9 @@ export default function CustomCursor() {
 
   if (pathname.startsWith('/studio')) return null;
 
+  // Hide cursor when lightbox image viewer is open
+  if (typeof document !== 'undefined' && document.body.classList.contains('lightbox-open')) return null;
+
   if (!isVisible) return null;
 
   // ── Position & size ──────────────────────────────────────────────────────

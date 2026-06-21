@@ -25,6 +25,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDarkBg, setIsDarkBg] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const rafId = useRef<number>(0);
@@ -33,6 +34,15 @@ export default function Navbar() {
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pastHeroRef = useRef(false);
   const isVisibleRef = useRef(true);
+
+  // Watch for lightbox-open class on body to hide navbar during image viewer
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsLightboxOpen(document.body.classList.contains('lightbox-open'));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   // ── Auto-hide logic: show on interaction, hide after inactivity past hero ──
   const showNavbar = useCallback(() => {
@@ -191,6 +201,7 @@ export default function Navbar() {
   }, [handleScroll, showNavbar]);
 
   if (pathname.startsWith('/studio')) return null;
+  if (isLightboxOpen) return null;
 
   const textColorClass = isDarkBg ? 'text-cream' : 'text-charcoal';
   const textHoverClass = isDarkBg ? 'group-hover:text-white hover:text-white' : 'group-hover:text-charcoal-dark hover:text-charcoal-dark';

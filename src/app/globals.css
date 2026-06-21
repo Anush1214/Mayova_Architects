@@ -223,10 +223,10 @@ body {
 
 /* ===== Custom Cursor (desktop with fine pointer only) ===== */
 @media (pointer: fine) {
-  body:not(.studio-mode) {
+  body:not(.studio-mode):not(.lightbox-open) {
     cursor: none;
   }
-  body:not(.studio-mode) * {
+  body:not(.studio-mode):not(.lightbox-open) * {
     cursor: inherit !important;
   }
 }

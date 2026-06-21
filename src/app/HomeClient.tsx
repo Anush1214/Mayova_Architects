@@ -50,7 +50,7 @@ export default function HomeClient({ projects }: HomeClientProps) {
       </div>
 
       {/* 2D Logo Animation Section */}
-      <div id="hero-logo-trigger" className="relative w-full h-[160vh] z-20">
+      <div id="hero-logo-trigger" className="relative w-full h-[160vh] z-20 overflow-hidden">
         <HeroLogo onReady={handleSceneReady} />
       </div>
 

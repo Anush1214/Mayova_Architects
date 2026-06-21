@@ -22,8 +22,18 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
   const [searchMobileOpen, setSearchMobileOpen] = useState(false);
   const [isDarkBg, setIsDarkBg] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Watch for lightbox-open class on body to hide sidebar during image viewer
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsLightboxOpen(document.body.classList.contains('lightbox-open'));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!initialProjects) {
@@ -122,6 +132,7 @@ export default function Sidebar({ projects: initialProjects }: { projects?: Proj
   }, [mobileOpen]);
 
   if (pathname.startsWith('/studio')) return null;
+  if (isLightboxOpen) return null;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {

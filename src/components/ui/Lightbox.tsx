@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -25,16 +26,26 @@ export default function Lightbox({
 }: LightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure we only use portals on the client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync index when initialIndex changes or lightbox opens
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
-      // Disable body scroll when lightbox is open
+      // Disable body scroll and signal to Navbar/Cursor to hide
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('lightbox-open');
+    } else {
+      document.body.classList.remove('lightbox-open');
     }
     return () => {
       document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
     };
   }, [isOpen, initialIndex]);
 
@@ -83,10 +94,11 @@ export default function Lightbox({
   }, [images, isOpen, onClose]);
 
   if (!isOpen || !images || images.length === 0) return null;
+  if (!mounted) return null;
 
   const activeImage = images[currentIndex];
 
-  return (
+  const lightboxContent = (
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -216,4 +228,6 @@ export default function Lightbox({
       )}
     </AnimatePresence>
   );
+
+  return createPortal(lightboxContent, document.body);
 }
